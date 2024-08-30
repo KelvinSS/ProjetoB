@@ -1,0 +1,13 @@
+{
+  "cli": {
+    "version": ">= 11.0.2"
+  },
+  "build": {
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "gradleCommand": ":app:assembleRelease"
+      }
+    }
+  }
+}
