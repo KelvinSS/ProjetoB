@@ -6,7 +6,6 @@ export const ExpenseContext = createContext();
 export const ExpenseProvider = ({ children }) => {
     const [expenses, setExpenses] = useState([]);
 
-    // Carrega os gastos salvos no AsyncStorage
     useEffect(() => {
         const loadExpenses = async () => {
             try {
@@ -22,7 +21,6 @@ export const ExpenseProvider = ({ children }) => {
         loadExpenses();
     }, []);
 
-    // Salva os gastos no AsyncStorage sempre que eles mudarem
     useEffect(() => {
         const saveExpenses = async () => {
             try {
@@ -43,8 +41,12 @@ export const ExpenseProvider = ({ children }) => {
         setExpenses(expenses.filter(expense => expense.id !== id));
     };
 
+    const updateExpense = (updatedExpense) => {
+        setExpenses(expenses.map(expense => (expense.id === updatedExpense.id ? updatedExpense : expense)));
+    };
+
     return (
-        <ExpenseContext.Provider value={{ expenses, addExpense, deleteExpense }}>
+        <ExpenseContext.Provider value={{ expenses, addExpense, deleteExpense, updateExpense }}>
             {children}
         </ExpenseContext.Provider>
     );
