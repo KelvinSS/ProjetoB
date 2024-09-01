@@ -1,0 +1,3 @@
+Builda o instalavel: eas build --platform android
+Builda e roda o expo app: npx expo run:android
+Roda o expo: npm start
