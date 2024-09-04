@@ -4,10 +4,9 @@ import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-// Função para agrupar os gastos por data
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
-        const date = expense.date; // Formato da data já deve estar como string no formato "dd/mm/yyyy"
+        const date = expense.date;
         if (!grouped[date]) {
             grouped[date] = [];
         }
@@ -23,12 +22,18 @@ const calculateTotalAmount = (expenses) => {
 export default function HomeScreen({ navigation }) {
     const { expenses, walletBalance } = useContext(ExpenseContext);
 
-    // Agrupa os gastos por data
     const groupedExpenses = groupExpensesByDate(expenses);
-    const groupedExpensesArray = Object.keys(groupedExpenses).map(date => ({
-        date,
-        data: groupedExpenses[date]
-    }));
+    const groupedExpensesArray = Object.keys(groupedExpenses)
+        .map(date => ({
+            date,
+            data: groupedExpenses[date]
+        }))
+        .sort((a, b) => {
+            // Converta a string da data para um objeto Date para garantir que a ordenação funcione corretamente
+            const dateA = new Date(a.date.split('/').reverse().join('-'));
+            const dateB = new Date(b.date.split('/').reverse().join('-'));
+            return dateB - dateA;
+        });
 
     const totalAmount = calculateTotalAmount(expenses);
 
@@ -51,7 +56,8 @@ export default function HomeScreen({ navigation }) {
                 ProjetoB
             </Text>
             <Button title="Adicionar Gasto" onPress={() => navigation.navigate('AddExpense')} />
-            <View style={{ marginTop: 30 }}>
+
+            <View style={{ flex: 1, marginTop: 30 }}>
                 <Text style={{
                     alignSelf: 'center',
                     justifyContent: 'center',
@@ -64,7 +70,7 @@ export default function HomeScreen({ navigation }) {
                     </Text>
                 ) : (
                     <FlatList
-                        style={{ margin: 5 }}
+                        style={{ flex: 1, margin: 5 }}
                         data={groupedExpensesArray}
                         keyExtractor={item => item.date}
                         renderItem={({ item }) => (
@@ -92,7 +98,7 @@ export default function HomeScreen({ navigation }) {
                 )}
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View style={{ alignItems: 'center', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total Gasto:</Text>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {totalAmount.toFixed(2)}</Text>
@@ -102,23 +108,26 @@ export default function HomeScreen({ navigation }) {
                     style={{
                         alignItems: 'center',
                         padding: 10,
-                        borderWidth: 1,
+                        borderWidth: 5,
                         borderRadius: 10,
-                        borderColor: 'black',
-                        backgroundColor: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? 'yellow' : 'red',
+                        borderColor: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? 'yellow' : 'red',
                     }}>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total em carteira</Text>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {walletBalance.toFixed(2)}</Text>
                 </TouchableOpacity>
             </View>
-            <View>
-                {/* REMOVIDO TEMPORARIAMENTE
-                <TouchableOpacity>
-                    <View style={{ backgroundColor: 'white', height: 100, width: 100, justifyContent: 'center', alignItems: 'center', borderRadius: 10, borderColor: '#ccc', borderWidth: 1 }}>
-                        <Text>Ver dia</Text>
-                    </View>
-                </TouchableOpacity> */}
-            </View>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('CreditExpenses')}
+                style={{
+                    alignItems: 'center',
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    padding: 10,
+                    marginTop: 10,
+                    borderColor: '#ccc',
+                }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Ver Fatura</Text>
+            </TouchableOpacity>
         </ScreenWrapper>
     );
 }

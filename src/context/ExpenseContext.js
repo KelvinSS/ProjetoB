@@ -5,18 +5,24 @@ export const ExpenseContext = createContext();
 
 export const ExpenseProvider = ({ children }) => {
     const [expenses, setExpenses] = useState([]);
-    const [walletBalance, setWalletBalance] = useState(0); // Estado para o saldo da carteira
+    const [walletBalance, setWalletBalance] = useState(0);
+    const [paymentDay, setPaymentDay] = useState(1); // Novo estado para o dia de vencimento da fatura
 
     useEffect(() => {
         const loadExpensesAndBalance = async () => {
             try {
                 const savedExpenses = await AsyncStorage.getItem('expenses');
                 const savedBalance = await AsyncStorage.getItem('walletBalance');
+                const savedPaymentDay = await AsyncStorage.getItem('paymentDay'); // Carregar dia de vencimento
+
                 if (savedExpenses !== null) {
                     setExpenses(JSON.parse(savedExpenses));
                 }
                 if (savedBalance !== null) {
                     setWalletBalance(parseFloat(savedBalance));
+                }
+                if (savedPaymentDay !== null) {
+                    setPaymentDay(parseInt(savedPaymentDay, 10)); // Carregar dia de vencimento
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -31,13 +37,14 @@ export const ExpenseProvider = ({ children }) => {
             try {
                 await AsyncStorage.setItem('expenses', JSON.stringify(expenses));
                 await AsyncStorage.setItem('walletBalance', walletBalance.toString());
+                await AsyncStorage.setItem('paymentDay', paymentDay.toString()); // Salvar dia de vencimento
             } catch (error) {
                 console.error('Erro ao salvar dados:', error);
             }
         };
 
         saveExpensesAndBalance();
-    }, [expenses, walletBalance]);
+    }, [expenses, walletBalance, paymentDay]); // Incluir paymentDay na lista de dependências
 
     const addExpense = (expense) => {
         setExpenses([...expenses, expense]);
@@ -46,7 +53,7 @@ export const ExpenseProvider = ({ children }) => {
 
     const deleteExpense = (id) => {
         const expenseToDelete = expenses.find(expense => expense.id === id);
-        if (deleteExpense) {
+        if (expenseToDelete) {
             setExpenses(expenses.filter(expense => expense.id !== id));
             setWalletBalance(prevBalance => prevBalance + expenseToDelete.amount);
         }
@@ -60,8 +67,21 @@ export const ExpenseProvider = ({ children }) => {
         setWalletBalance(newBalance);
     };
 
+    const updatePaymentDay = (newDay) => {
+        setPaymentDay(newDay);
+    };
+
     return (
-        <ExpenseContext.Provider value={{ expenses, walletBalance, addExpense, deleteExpense, updateExpense, updateWalletBalance }}>
+        <ExpenseContext.Provider value={{
+            expenses,
+            walletBalance,
+            addExpense,
+            deleteExpense,
+            updateExpense,
+            updateWalletBalance,
+            paymentDay,
+            updatePaymentDay // Adicionar função de atualização
+        }}>
             {children}
         </ExpenseContext.Provider>
     );
