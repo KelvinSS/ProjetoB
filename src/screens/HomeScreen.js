@@ -16,8 +16,12 @@ const groupExpensesByDate = (expenses) => {
     }, {});
 };
 
+const calculateTotalAmount = (expenses) => {
+    return expenses.reduce((total, expense) => total + expense.amount, 0);
+};
+
 export default function HomeScreen({ navigation }) {
-    const { expenses, deleteExpense } = useContext(ExpenseContext);
+    const { expenses, walletBalance } = useContext(ExpenseContext);
 
     // Agrupa os gastos por data
     const groupedExpenses = groupExpensesByDate(expenses);
@@ -26,8 +30,16 @@ export default function HomeScreen({ navigation }) {
         data: groupedExpenses[date]
     }));
 
+    const totalAmount = calculateTotalAmount(expenses);
+
     return (
         <ScreenWrapper>
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Config')}
+                style={{ flexDirection: 'row', justifyContent: 'flex-end' }}
+            >
+                <Text>Config</Text>
+            </TouchableOpacity>
             <Text style={{
                 alignSelf: 'center',
                 justifyContent: 'center',
@@ -66,6 +78,11 @@ export default function HomeScreen({ navigation }) {
                                         <View style={{ height: 50, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, alignItems: 'center', padding: 5 }}>
                                             <Text>{expense.description} - R$ {expense.amount}</Text>
                                             <Text>{expense.location ? expense.location : ''}</Text>
+                                            {expense.payment ?
+                                                <View style={{ backgroundColor: '#ccc', width: 80, height: 30, alignItems: "center", justifyContent: 'center', borderRadius: 5 }}>
+                                                    <Text>{expense.payment}</Text>
+                                                </View>
+                                                : <Text></Text>}
                                         </View>
                                     </TouchableOpacity>
                                 ))}
@@ -73,6 +90,34 @@ export default function HomeScreen({ navigation }) {
                         )}
                     />
                 )}
+            </View>
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                <View style={{ alignItems: 'center', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total Gasto:</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {totalAmount.toFixed(2)}</Text>
+                </View>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Config')}
+                    style={{
+                        alignItems: 'center',
+                        padding: 10,
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        borderColor: 'black',
+                        backgroundColor: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? 'yellow' : 'red',
+                    }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total em carteira</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {walletBalance.toFixed(2)}</Text>
+                </TouchableOpacity>
+            </View>
+            <View>
+                {/* REMOVIDO TEMPORARIAMENTE
+                <TouchableOpacity>
+                    <View style={{ backgroundColor: 'white', height: 100, width: 100, justifyContent: 'center', alignItems: 'center', borderRadius: 10, borderColor: '#ccc', borderWidth: 1 }}>
+                        <Text>Ver dia</Text>
+                    </View>
+                </TouchableOpacity> */}
             </View>
         </ScreenWrapper>
     );

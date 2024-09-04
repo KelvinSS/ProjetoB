@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
+import { Picker } from '@react-native-picker/picker';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -13,9 +14,11 @@ const EditExpenseScreen = ({ route, navigation }) => {
         return <Text>Gasto não encontrado</Text>;
     }
 
+    const [newEditDate, setNewEditDate] = useState(expenseToEdit.date || '');
     const [newDescription, setNewDescription] = useState(expenseToEdit.description || '');
     const [newAmount, setNewAmount] = useState(expenseToEdit.amount ? expenseToEdit.amount.toString() : '');
     const [newLocation, setNewLocation] = useState(expenseToEdit.location || '');
+    const [newPayment, setNewPayment] = useState('Débito');
 
     const handleSave = () => {
         if (!newDescription || !newAmount) {
@@ -28,7 +31,8 @@ const EditExpenseScreen = ({ route, navigation }) => {
             description: newDescription,
             amount: parseFloat(newAmount),
             location: newLocation,
-            date: expenseToEdit.date,
+            payment: newPayment,
+            date: newEditDate,
         });
         navigation.goBack();
     };
@@ -56,6 +60,12 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     return (
         <ScreenWrapper>
+            <Text style={styles.label}>Data:</Text>
+            <TextInput
+                style={styles.input}
+                value={newEditDate}
+                onChangeText={setNewEditDate}
+            />
             <Text style={styles.label}>Descrição:</Text>
             <TextInput
                 style={styles.input}
@@ -75,7 +85,19 @@ const EditExpenseScreen = ({ route, navigation }) => {
                 value={newLocation}
                 onChangeText={setNewLocation}
             />
-            <View style={{ height: 90, justifyContent: 'space-between'}}>
+            <Picker
+                selectedValue={newPayment}
+                onValueChange={(itemValue) => setNewPayment(itemValue)}
+                mode='dropdown'
+                borderColor='red'
+                style={{ backgroundColor: '#ccc', marginBottom: 15 }}
+                borderWidth='2'
+            >
+                <Picker.Item label='Débito' value={'Débito'} />
+                <Picker.Item label='Pix' value={'Pix'} />
+                <Picker.Item label='Crédito' value={'Crédito'} />
+            </Picker>
+            <View style={{ height: 90, justifyContent: 'space-between' }}>
                 <Button title="Salvar" onPress={handleSave} />
                 <Button title="Deletar" onPress={handleDelete} color={'red'} />
             </View>
