@@ -3,9 +3,10 @@ import { StyleSheet, TextInput, Button, Text } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper'
 import { Picker } from '@react-native-picker/picker';
+import Dropdown from '../components/Dropdawn';
 
 export default function AddExpenseScreen({ navigation }) {
-    const [editDate, setEditDate] = useState('');
+    const [editDate, setEditDate] = useState(new Date().toLocaleDateString());
     const [description, setDescription] = useState('');
     const [amount, setAmount] = useState('');
     const [location, setLocation] = useState('');
@@ -28,7 +29,7 @@ export default function AddExpenseScreen({ navigation }) {
 
     return (
         <ScreenWrapper>
-            <Text style={styles.label}>Dia: {new Date().toLocaleDateString()}</Text>
+            <Text style={styles.label}>Dia</Text>
             <TextInput value={editDate} onChangeText={setEditDate} style={styles.input} />
             <Text style={styles.label}>Descrição</Text>
             <TextInput value={description} onChangeText={setDescription} style={styles.input} />
@@ -37,18 +38,7 @@ export default function AddExpenseScreen({ navigation }) {
             <Text style={styles.label}>Local (Opcional)</Text>
             <TextInput value={location} onChangeText={setLocation} style={styles.input} />
             <Text style={styles.label}>Forma de pagamento</Text>
-            <Picker
-                selectedValue={payment}
-                onValueChange={(itemValue) => setPayment(itemValue)}
-                mode='dropdown'
-                borderColor='red'
-                style={{ backgroundColor: '#ccc', marginBottom: 15 }}
-                borderWidth='2'
-            >
-                <Picker.Item label='Débito' value={'Débito'} />
-                <Picker.Item label='Pix' value={'Pix'} />
-                <Picker.Item label='Crédito' value={'Crédito'} />
-            </Picker>
+            <Dropdown selectedValue={payment} onValueChange={setPayment} />
             <Button title="Adicionar Gasto" onPress={handleAddExpense} />
         </ScreenWrapper>
     );
