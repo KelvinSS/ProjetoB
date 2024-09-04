@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { Picker } from '@react-native-picker/picker';
+import Dropdown from '../components/Dropdawn';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -60,43 +61,33 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     return (
         <ScreenWrapper>
-            <Text style={styles.label}>Data:</Text>
+            <Text style={styles.label}>Data</Text>
             <TextInput
                 style={styles.input}
                 value={newEditDate}
                 onChangeText={setNewEditDate}
             />
-            <Text style={styles.label}>Descrição:</Text>
+            <Text style={styles.label}>Descrição</Text>
             <TextInput
                 style={styles.input}
                 value={newDescription}
                 onChangeText={setNewDescription}
             />
-            <Text style={styles.label}>Valor:</Text>
+            <Text style={styles.label}>Valor</Text>
             <TextInput
                 style={styles.input}
                 value={newAmount}
                 onChangeText={text => setNewAmount(text)}
                 keyboardType="numeric"
             />
-            <Text style={styles.label}>Local (Opcional):</Text>
+            <Text style={styles.label}>Local (Opcional)</Text>
             <TextInput
                 style={styles.input}
                 value={newLocation}
                 onChangeText={setNewLocation}
             />
-            <Picker
-                selectedValue={newPayment}
-                onValueChange={(itemValue) => setNewPayment(itemValue)}
-                mode='dropdown'
-                borderColor='red'
-                style={{ backgroundColor: '#ccc', marginBottom: 15 }}
-                borderWidth='2'
-            >
-                <Picker.Item label='Débito' value={'Débito'} />
-                <Picker.Item label='Pix' value={'Pix'} />
-                <Picker.Item label='Crédito' value={'Crédito'} />
-            </Picker>
+            <Text style={styles.label}>Forma de pagamento</Text>
+            <Dropdown selectedValue={newPayment} onValueChange={setNewPayment} />
             <View style={{ height: 90, justifyContent: 'space-between' }}>
                 <Button title="Salvar" onPress={handleSave} />
                 <Button title="Deletar" onPress={handleDelete} color={'red'} />
