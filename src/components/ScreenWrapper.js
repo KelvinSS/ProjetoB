@@ -1,8 +1,12 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 
 export default function ScreenWrapper({ children }) {
-    return <View style={styles.container}>{children}</View>;
+    return (
+        <View style={styles.container}>
+            {children}
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
