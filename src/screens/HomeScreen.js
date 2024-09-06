@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
-import { View, FlatList, Text, Button } from 'react-native';
+import { View, FlatList, Text, Button, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
-import ScreenWrapper from '../components/ScreenWrapper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import ScreenWrapper from '../components/ScreenWrapper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/authContext';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -20,6 +22,7 @@ const calculateTotalAmount = (expenses) => {
 };
 
 export default function HomeScreen({ navigation }) {
+    const { logout } = useContext(AuthContext);
     const { expenses, walletBalance } = useContext(ExpenseContext);
 
     const groupedExpenses = groupExpensesByDate(expenses);
@@ -37,14 +40,49 @@ export default function HomeScreen({ navigation }) {
 
     const totalAmount = calculateTotalAmount(expenses);
 
+    const handleLogout = async () => {
+        Alert.alert(
+            'Sair',
+            'Deseja realmente sair do ProjetoB?',
+            [
+                {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                },
+                {
+                    text: 'Sair',
+                    style: 'default',
+                    onPress: async () => {
+                        await logout();
+                        navigation.replace('Login'); // Navega de volta para a tela de login
+                    }
+                }
+            ]
+        )
+    };
+
     return (
         <ScreenWrapper>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('Config')}
-                style={{ flexDirection: 'row', justifyContent: 'flex-end' }}
-            >
-                <Text>Config</Text>
-            </TouchableOpacity>
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: 10,
+            }}>
+                <TouchableOpacity
+                    onPress={handleLogout}
+                    style={{ alignSelf: 'center' }}
+                >
+                    <Text>SAIR</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('Config')}
+                    style={{ alignSelf: 'center' }}
+                >
+                    <Text>Config</Text>
+                </TouchableOpacity>
+            </View>
+
             <Text style={{
                 alignSelf: 'center',
                 justifyContent: 'center',
@@ -100,7 +138,7 @@ export default function HomeScreen({ navigation }) {
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View style={{ alignItems: 'center', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total Gasto:</Text>
+                    <Text style={{ fontSize: 20 }}>Total Gasto:</Text>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {totalAmount.toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity
@@ -108,12 +146,12 @@ export default function HomeScreen({ navigation }) {
                     style={{
                         alignItems: 'center',
                         padding: 10,
-                        borderWidth: 5,
+                        borderWidth: 1,
                         borderRadius: 10,
-                        borderColor: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? 'yellow' : 'red',
+                        borderColor: '#ccc',
                     }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Total em carteira</Text>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {walletBalance.toFixed(2)}</Text>
+                    <Text style={{ fontSize: 20 }}>Total Saldo</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? '#ffcf33' : 'red', }}>R$ {walletBalance.toFixed(2)}</Text>
                 </TouchableOpacity>
             </View>
             <TouchableOpacity
