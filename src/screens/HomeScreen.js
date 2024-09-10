@@ -2,9 +2,8 @@ import React, { useContext } from 'react';
 import { View, FlatList, Text, Button, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ScreenWrapper from '../components/ScreenWrapper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/authContext';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -43,7 +42,7 @@ export default function HomeScreen({ navigation }) {
     const handleLogout = async () => {
         Alert.alert(
             'Sair',
-            'Deseja realmente sair do ProjetoB?',
+            'Deseja realmente sair?',
             [
                 {
                     text: 'Cancelar',
@@ -91,8 +90,9 @@ export default function HomeScreen({ navigation }) {
                 fontWeight: 'bold',
                 paddingTop: "20%"
             }}>
-                ProjetoB
+                Zenith
             </Text>
+
             <Button title="Adicionar Gasto" onPress={() => navigation.navigate('AddExpense')} />
 
             <View style={{ flex: 1, marginTop: 30 }}>
@@ -154,18 +154,32 @@ export default function HomeScreen({ navigation }) {
                     <Text style={{ fontSize: 20, fontWeight: 'bold', color: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? '#ffcf33' : 'red', }}>R$ {walletBalance.toFixed(2)}</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('CreditExpenses')}
-                style={{
-                    alignItems: 'center',
-                    borderWidth: 1,
-                    borderRadius: 10,
-                    padding: 10,
-                    marginTop: 10,
-                    borderColor: '#ccc',
-                }}>
-                <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Ver Fatura</Text>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('CreditExpenses')}
+                    style={{
+                        alignItems: 'center',
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        padding: 10,
+                        marginTop: 10,
+                        borderColor: '#ccc',
+                    }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Ver Fatura</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('PlanningScreen')}
+                    style={{
+                        alignItems: 'center',
+                        borderWidth: 1,
+                        borderRadius: 10,
+                        padding: 10,
+                        marginTop: 10,
+                        borderColor: '#ccc',
+                    }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Planejamento</Text>
+                </TouchableOpacity>
+            </View>
         </ScreenWrapper>
     );
 }

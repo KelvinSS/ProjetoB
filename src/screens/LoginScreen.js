@@ -51,7 +51,7 @@ const LoginScreen = ({ navigation }) => {
                         fontSize: 40,
                         marginBottom: 0,
                     }}>
-                        ProjetoB
+                        Zenith
                     </Text>
 
                     <View style={{ width: '100%' }}>
