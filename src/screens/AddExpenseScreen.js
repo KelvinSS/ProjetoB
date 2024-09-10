@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, TextInput, Button, Text } from 'react-native';
+import { StyleSheet, TextInput, Button, Text, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper'
 import { Picker } from '@react-native-picker/picker';
@@ -14,6 +14,10 @@ export default function AddExpenseScreen({ navigation }) {
     const { addExpense } = useContext(ExpenseContext);
 
     const handleAddExpense = () => {
+        if (!description || !amount) {
+            Alert.alert('Atenção!', 'Descrição e valor são obrigatórios');
+            return;
+        }
         const newExpense = {
             id: Date.now(),
             description,

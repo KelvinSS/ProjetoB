@@ -23,7 +23,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     const handleSave = () => {
         if (!newDescription || !newAmount) {
-            alert('Descrição e valor são obrigatórios');
+            Alert.alert('Descrição e valor são obrigatórios');
             return;
         }
 
