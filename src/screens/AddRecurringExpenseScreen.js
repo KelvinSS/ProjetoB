@@ -55,7 +55,7 @@ export default function AddRecurringExpenseScreen({ navigation }) {
             <Picker
                 selectedValue={paymentDay}
                 onValueChange={setPaymentDay}
-                style={{ backgroundColor: COLOR.Jade }}
+                style={{ backgroundColor: COLOR.Jade, color: COLOR.White }}
             >
                 <Picker.Item label='Aguardando' value='Aguardando' />
                 <Picker.Item label='Pago' value='Pago' />

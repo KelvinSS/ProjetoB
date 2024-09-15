@@ -87,7 +87,7 @@ const EditPlanningScreen = ({ route, navigation }) => {
             <Picker
                 selectedValue={newPaymentDay}
                 onValueChange={setNewPaymentDay}
-                style={{ backgroundColor: COLOR.Jade }}
+                style={{ backgroundColor: COLOR.Jade, color: COLOR.White }}
             >
                 <Picker.Item label='Aguardando' value='Aguardando' />
                 <Picker.Item label='Pago' value='Pago' />

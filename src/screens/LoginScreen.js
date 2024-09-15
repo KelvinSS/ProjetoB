@@ -6,7 +6,6 @@ import ButtonK from '../components/ButtonK';
 import InputStyle from '../components/InputStyle';
 import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { COLOR } from '../theme/Theme';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');
@@ -23,16 +22,16 @@ const LoginScreen = ({ navigation }) => {
     const handleLogin = async () => {
         try {
             await login(inputUsername, inputPassword);
-            Alert.alert('Sucesso', 'Bem-vindo ' + inputUsername);
+            /* Alert.alert('Sucesso', 'Bem-vindo ' + inputUsername); */
         } catch (error) {
-            Alert.alert('', error.message);
+            Alert.alert('Erro', error.message);
         }
     };
 
     const handleBiometricAuth = async () => {
         const result = await enableBiometricAuth();
         if (result.success) {
-            Alert.alert('Sucesso', 'Bem-vindo ' + inputUsername);
+            /* Alert.alert('Sucesso', 'Bem-vindo ' + inputUsername); */
         } else {
             Alert.alert('Erro', result.message || 'Autenticação biométrica falhou');
         }

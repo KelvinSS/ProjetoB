@@ -9,13 +9,20 @@ import MaskInput, { Masks } from 'react-native-mask-input';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ScreenWrapper from '../components/ScreenWrapper';
 import ClearStorageButton from '../components/ClearStorageButton';
+import { COLOR } from '../theme/Theme';
+import ButtonK from '../components/ButtonK';
+import InputStyle from '../components/InputStyle';
+import ButtonMenu from '../components/ButtonMenu';
+import InputReal from '../components/InputReal';
 
 export default function ConfigScreen({ navigation }) {
     const { walletBalance, updateWalletBalance, updatePaymentDay } = useContext(ExpenseContext);
+    const { username, password, login } = useContext(AuthContext);
+
     const [saldo, setSaldo] = useState('');
     const [soma, setSoma] = useState('add');
     const [selectedPaymentDay, setSelectedPaymentDay] = useState(1);
-    const { username, password, login } = useContext(AuthContext); // Obtenha o usuário e senha do contexto
+
     const [newUsername, setNewUsername] = useState(username || '');
     const [newPassword, setNewPassword] = useState('');
     const [viewOn, setViewOn] = useState(true);
@@ -26,24 +33,23 @@ export default function ConfigScreen({ navigation }) {
                 const savedPaymentDay = await AsyncStorage.getItem('paymentDay');
                 if (savedPaymentDay !== null) {
                     setSelectedPaymentDay(parseInt(savedPaymentDay, 10));
-                }
+                };
             } catch (error) {
-                console.error('Erro ao carregar o dia de pagamento:', error);
-            }
+                cnsole.error('Erro ao carregar o dia de pagamento:', error);
+            };
         };
 
         loadPaymentDay();
     }, []);
 
     const handleBalanceUpdate = async () => {
-        // Remove a formatação e substitui a vírgula por ponto
         const numericValue = parseFloat(saldo.replace(/[^\d,]/g, '').replace(',', '.'));
 
         if (soma === 'add') {
             if (!isNaN(numericValue)) {
                 updateWalletBalance(walletBalance + numericValue);
                 navigation.goBack();
-                alert('Foi adicionado em sua carteira: ' + numericValue);
+                alert('Foi adicionado em sua carteira: ' + numericValue.toFixed(2));
             } else {
                 updateWalletBalance(walletBalance + 0);
                 navigation.goBack();
@@ -52,14 +58,13 @@ export default function ConfigScreen({ navigation }) {
             if (!isNaN(numericValue)) {
                 updateWalletBalance(walletBalance - numericValue);
                 navigation.goBack();
-                alert('Foi removido em sua carteira: ' + numericValue);
+                alert('Foi removido em sua carteira: ' + numericValue.toFixed(2));
             } else {
                 updateWalletBalance(walletBalance - 0);
                 navigation.goBack();
             };
         };
     };
-
 
     const handleUpdatePaymentDay = async () => {
         try {
@@ -69,7 +74,7 @@ export default function ConfigScreen({ navigation }) {
             navigation.goBack();
         } catch (error) {
             console.error('Erro ao salvar o dia de pagamento:', error);
-        }
+        };
     };
 
     const getSecondsUntilDate = ({ day, month, hour, minute }) => {
@@ -83,7 +88,7 @@ export default function ConfigScreen({ navigation }) {
             date = new Date(now.getFullYear() + 1, month, day, hour, minute);
             diff = date.getTime() - now.getTime();
             return Math.floor(diff / 1000);
-        }
+        };
     };
 
     const scheduleNotification = async () => {
@@ -108,7 +113,7 @@ export default function ConfigScreen({ navigation }) {
             console.log('Notification scheduled with ID:', notificationId);
         } catch (error) {
             console.error('Erro ao agendar a notificação:', error.message);
-        }
+        };
     };
 
     const handleUpdateCredentials = async () => {
@@ -137,18 +142,32 @@ export default function ConfigScreen({ navigation }) {
                 <Picker
                     selectedValue={soma}
                     onValueChange={setSoma}
-                    style={{ backgroundColor: '#ccc', flex: 1, height: 40 }}
-                >
+                    style={{
+                        backgroundColor: COLOR.Jade,
+                        color: COLOR.White,
+                        flex: 1,
+                        height: 40
+                    }}>
                     <Picker.Item label={'Adicionar Saldo'} value={'add'} />
                     <Picker.Item label={'Remover Saldo'} value={'remove'} />
                 </Picker>
-                <MaskInput
+                <InputReal
+                    value={saldo}
+                    onChangeText={setSaldo}
+                    style={{
+                        width: '55%',
+                        marginLeft: 10,
+                        height: 50,
+                    }}
+                />
+                {/* <MaskInput
                     value={saldo}
                     onChangeText={setSaldo}
                     keyboardType='decimal-pad'
                     placeholder='R$ 0.00'
                     style={{
-                        width: '65%',
+                        width: '55%',
+                        marginLeft: 10,
                         height: 53,
                         borderColor: '#ccc',
                         borderWidth: 1,
@@ -158,9 +177,9 @@ export default function ConfigScreen({ navigation }) {
                         marginBottom: 10,
                     }}
                     mask={Masks.BRL_CURRENCY}
-                />
+                /> */}
             </View>
-            <Button onPress={handleBalanceUpdate} title="Atualizar Saldo" />
+            <ButtonK onPress={handleBalanceUpdate} title="Atualizar Saldo" />
 
             <View style={styles.pickerContainer}>
                 <Text>Cartão de crédito</Text>
@@ -176,43 +195,37 @@ export default function ConfigScreen({ navigation }) {
                 </Picker>
             </View>
 
-            <Button onPress={handleUpdatePaymentDay} title="Salvar" />
+            <ButtonK onPress={handleUpdatePaymentDay} title="Salvar" />
 
-            {/* Seção de mudar nome de usuário e senha */}
             <View style={styles.inputContainer}>
                 <Text>Mudar Nome de Usuário</Text>
-                <TextInput
+                <InputStyle
                     value={newUsername}
                     onChangeText={setNewUsername}
-                    style={styles.input}
                     placeholder={username}
                 />
 
                 <Text>Mudar Senha</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TextInput
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <InputStyle
                         value={newPassword}
                         onChangeText={setNewPassword}
-                        style={styles.inputPassword}
+                        placeholder={password}
                         secureTextEntry={viewOn}
+                        style={{ flex: 1 }}
                     />
-                    <TouchableOpacity
-                        onPress={handleViewPassword}
-                        style={{
-                            backgroundColor: '#ccc',
-                            width: 50,
-                            height: 40,
-                            alignItems: "center",
-                            justifyContent: 'center',
-                            borderRadius: 5,
-                            marginLeft: 5,
-                        }}
-                    >
-                        <Text>Ver</Text>
-                    </TouchableOpacity>
+                    <View style={{ position: 'absolute', right: 0, top: 4 }}>
+                        <ButtonMenu
+                            onPress={handleViewPassword}
+                            title={'Ver'}
+                            style={{ width: 65 }}
+                            textStyle={{ fontSize: 12 }}
+                        />
+                    </View>
                 </View>
+
                 <View style={{ paddingTop: 20 }}>
-                    <Button onPress={handleUpdateCredentials} title="Atualizar Usuário" />
+                    <ButtonK onPress={handleUpdateCredentials} title="Atualizar Usuário" />
                 </View>
             </View>
             <View style={{ bottom: -90 }}>
@@ -250,7 +263,8 @@ const styles = StyleSheet.create({
     },
     picker: {
         height: 50,
-        backgroundColor: '#ccc',
+        backgroundColor: COLOR.Jade,
+        color: COLOR.White
     },
     inputContainer: {
         marginTop: 20,

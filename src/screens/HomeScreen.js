@@ -3,7 +3,7 @@ import { View, FlatList, Text, Button, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AuthContext } from '../context/authContext';
-import { COLOR } from '../theme/Theme';
+import { COLOR, FONTE } from '../theme/Theme';
 
 import ButtonK from '../components/ButtonK';
 import ButtonMenu from '../components/ButtonMenu';

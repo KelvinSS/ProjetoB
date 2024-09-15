@@ -3,6 +3,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { Picker } from '@react-native-picker/picker';
+import { COLOR } from '../theme/Theme';
 
 const CreditExpensesScreen = ({ navigation }) => {
     const { expenses, paymentDay } = useContext(ExpenseContext);
@@ -114,19 +115,20 @@ const CreditExpensesScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     header: {
         alignSelf: 'center',
-        fontSize: 24,
         fontWeight: 'bold',
+        fontSize: 24,
         marginBottom: 20,
     },
     picker: {
         marginBottom: 20,
         height: 50,
-        backgroundColor: '#ccc'
+        backgroundColor: COLOR.Jade,
+        color: COLOR.White
     },
     totalText: {
+        marginBottom: 10,
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 10,
         textAlign: 'center',
     },
     noExpenses: {
@@ -134,15 +136,15 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     expenseItem: {
+        padding: 5,
         height: 50,
         marginBottom: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
         borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 5,
+        borderColor: COLOR.Jade,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
         alignItems: 'center',
-        padding: 5,
     },
 });
 

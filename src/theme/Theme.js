@@ -1,3 +1,4 @@
+import { Montserrat_400Regular, Montserrat_700Bold } from "@expo-google-fonts/montserrat";
 
 export const COLOR = {
     White: '#fff',
@@ -13,4 +14,9 @@ export const COLOR = {
     Jade: '#00A86B',
 
     Background: '#f7f7f7'
+};
+
+export const FONTE = {
+    Regular: Montserrat_400Regular,
+    Bold: Montserrat_700Bold,
 };

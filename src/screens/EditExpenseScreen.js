@@ -4,6 +4,8 @@ import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Dropdown from '../components/Dropdawn';
 import InputReal from '../components/InputReal';
+import ButtonK from '../components/ButtonK';
+import { COLOR } from '../theme/Theme';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -88,11 +90,18 @@ const EditExpenseScreen = ({ route, navigation }) => {
                 value={newLocation}
                 onChangeText={setNewLocation}
             />
+
             <Text style={styles.label}>Forma de pagamento</Text>
+
             <Dropdown selectedValue={newPayment} onValueChange={setNewPayment} />
+
             <View style={{ height: 90, justifyContent: 'space-between' }}>
-                <Button title="Salvar" onPress={handleSave} />
-                <Button title="Deletar" onPress={handleDelete} color={'red'} />
+                <ButtonK title={"Salvar"} onPress={handleSave} />
+                <ButtonK
+                    style={{ backgroundColor: COLOR.Red }}
+                    onPress={handleDelete}
+                    title={"Deletar"}
+                />
             </View>
         </ScreenWrapper>
     );
