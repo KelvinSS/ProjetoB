@@ -2,8 +2,8 @@ import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import ScreenWrapper from '../components/ScreenWrapper';
-import { Picker } from '@react-native-picker/picker';
 import Dropdown from '../components/Dropdawn';
+import InputReal from '../components/InputReal';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -22,6 +22,8 @@ const EditExpenseScreen = ({ route, navigation }) => {
     const [newPayment, setNewPayment] = useState('Débito');
 
     const handleSave = () => {
+        const numericValue = parseFloat(newAmount.replace(/[^\d,]/g, '').replace(',', '.'));
+
         if (!newDescription || !newAmount) {
             Alert.alert('Descrição e valor são obrigatórios');
             return;
@@ -30,11 +32,12 @@ const EditExpenseScreen = ({ route, navigation }) => {
         updateExpense({
             id,
             description: newDescription,
-            amount: parseFloat(newAmount),
+            amount: parseFloat(numericValue),
             location: newLocation,
             payment: newPayment,
             date: newEditDate,
         });
+
         navigation.goBack();
     };
 
@@ -74,12 +77,11 @@ const EditExpenseScreen = ({ route, navigation }) => {
                 onChangeText={setNewDescription}
             />
             <Text style={styles.label}>Valor</Text>
-            <TextInput
-                style={styles.input}
+            <InputReal
                 value={newAmount}
-                onChangeText={text => setNewAmount(text)}
-                keyboardType="numeric"
+                onChangeText={setNewAmount}
             />
+
             <Text style={styles.label}>Local (Opcional)</Text>
             <TextInput
                 style={styles.input}

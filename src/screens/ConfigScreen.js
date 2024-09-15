@@ -7,6 +7,8 @@ import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaskInput, { Masks } from 'react-native-mask-input';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import ScreenWrapper from '../components/ScreenWrapper';
+import ClearStorageButton from '../components/ClearStorageButton';
 
 export default function ConfigScreen({ navigation }) {
     const { walletBalance, updateWalletBalance, updatePaymentDay } = useContext(ExpenseContext);
@@ -129,7 +131,7 @@ export default function ConfigScreen({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
+        <ScreenWrapper>
             <Text>Saldo da carteira</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Picker
@@ -213,7 +215,10 @@ export default function ConfigScreen({ navigation }) {
                     <Button onPress={handleUpdateCredentials} title="Atualizar Usuário" />
                 </View>
             </View>
-        </View>
+            <View style={{ bottom: -90 }}>
+                <ClearStorageButton />
+            </View>
+        </ScreenWrapper>
     );
 }
 

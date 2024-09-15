@@ -13,7 +13,7 @@ export const ExpenseProvider = ({ children }) => {
             try {
                 const savedExpenses = await AsyncStorage.getItem('expenses');
                 const savedBalance = await AsyncStorage.getItem('walletBalance');
-                const savedPaymentDay = await AsyncStorage.getItem('paymentDay'); // Carregar dia de vencimento
+                const savedPaymentDay = await AsyncStorage.getItem('paymentDay');
 
                 if (savedExpenses !== null) {
                     setExpenses(JSON.parse(savedExpenses));
@@ -22,7 +22,7 @@ export const ExpenseProvider = ({ children }) => {
                     setWalletBalance(parseFloat(savedBalance));
                 }
                 if (savedPaymentDay !== null) {
-                    setPaymentDay(parseInt(savedPaymentDay, 10)); // Carregar dia de vencimento
+                    setPaymentDay(parseInt(savedPaymentDay, 10));
                 }
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -37,14 +37,14 @@ export const ExpenseProvider = ({ children }) => {
             try {
                 await AsyncStorage.setItem('expenses', JSON.stringify(expenses));
                 await AsyncStorage.setItem('walletBalance', walletBalance.toString());
-                await AsyncStorage.setItem('paymentDay', paymentDay.toString()); // Salvar dia de vencimento
+                await AsyncStorage.setItem('paymentDay', paymentDay.toString());
             } catch (error) {
                 console.error('Erro ao salvar dados:', error);
             }
         };
 
         saveExpensesAndBalance();
-    }, [expenses, walletBalance, paymentDay]); // Incluir paymentDay na lista de dependências
+    }, [expenses, walletBalance, paymentDay]);
 
     const addExpense = (expense) => {
         setExpenses([...expenses, expense]);
@@ -80,7 +80,7 @@ export const ExpenseProvider = ({ children }) => {
             updateExpense,
             updateWalletBalance,
             paymentDay,
-            updatePaymentDay // Adicionar função de atualização
+            updatePaymentDay
         }}>
             {children}
         </ExpenseContext.Provider>

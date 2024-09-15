@@ -27,11 +27,12 @@ const CreditExpensesScreen = ({ navigation }) => {
 
         // Data de início da fatura (dia seguinte ao fechamento do mês anterior)
         let startOfBilling = new Date(yearForStart, previousMonth - 1, paymentDay + 1);
+        //let startOfBilling = new Date(yearForStart, previousMonth - 1, paymentDay + 1);
 
         // Ajuste para garantir que o início da fatura seja sempre o dia seguinte ao fechamento anterior
-        if (startOfBilling.getDate() > new Date(yearForStart, previousMonth, 10).getDate()) {
+        /* if (startOfBilling.getDate() > new Date(yearForStart, previousMonth, 10).getDate()) {
             startOfBilling = new Date(currentYear, month - 1, 1); // Início no primeiro dia do mês atual
-        }
+        } */
 
         return { startOfBilling, endOfBilling };
     };
