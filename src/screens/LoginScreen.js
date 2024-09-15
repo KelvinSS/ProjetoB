@@ -1,8 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, TextInput, Button, Text, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { AuthContext } from '../context/authContext';
-import ClearStorageButton from '../components/ClearStorageButton';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import ButtonK from '../components/ButtonK';
+import InputStyle from '../components/InputStyle';
+import ButtonMenu from '../components/ButtonMenu';
+import ScreenWrapper from '../components/ScreenWrapper';
+import { COLOR } from '../theme/Theme';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');
@@ -39,70 +43,56 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            {!isLoggedIn ? (
-                <>
-                    <Text style={{
-                        justifyContent: 'center',
-                        position: 'absolute',
-                        alignSelf: 'center',
-                        fontWeight: 'bold',
-                        top: '20%',
-                        fontSize: 40,
-                        marginBottom: 0,
-                    }}>
-                        Zenith
-                    </Text>
+        <ScreenWrapper>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                {!isLoggedIn ? (
+                    <>
+                        <Text style={{
+                            justifyContent: 'center',
+                            alignSelf: 'center',
+                            fontWeight: 'bold',
+                            fontSize: 40,
+                            marginBottom: 50,
+                        }}>
+                            Zenith
+                        </Text>
 
-                    <View style={{ width: '100%' }}>
-                        <TextInput
-                            placeholder="Nome de usuário"
-                            value={inputUsername}
-                            onChangeText={setInputUsername}
-                            style={{ borderWidth: 1, marginBottom: 20, padding: 10 }}
-                        />
-
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TextInput
-                                placeholder="Senha"
-                                value={inputPassword}
-                                onChangeText={setInputPassword}
-                                secureTextEntry={viewOn}
-                                style={{
-                                    flex: 1,
-                                    padding: 10,
-                                    borderWidth: 1,
-                                    marginBottom: 0,
-                                }}
+                        <View style={{ width: '100%' }}>
+                            <InputStyle
+                                value={inputUsername}
+                                onChangeText={setInputUsername}
+                                placeholder={'Nome de usuário'}
                             />
 
-                            <TouchableOpacity
-                                onPress={handleViewPassword}
-                                style={{
-                                    backgroundColor: '#ccc',
-                                    width: 50,
-                                    height: 40,
-                                    alignItems: "center",
-                                    justifyContent: 'center',
-                                    borderRadius: 5,
-                                    marginLeft: 5,
-                                }}
-                            >
-                                <Text>Ver</Text>
-                            </TouchableOpacity>
-                        </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                                <InputStyle
+                                    value={inputPassword}
+                                    onChangeText={setInputPassword}
+                                    placeholder={'Senha'}
+                                    secureTextEntry={viewOn}
+                                    style={{ flex: 1 }}
+                                />
+                                <View style={{ position: 'absolute', right: 0, top: 4 }}>
+                                    <ButtonMenu
+                                        onPress={handleViewPassword}
+                                        title={'Ver'}
+                                        style={{ width: 65 }}
+                                        textStyle={{ fontSize: 12 }}
+                                    />
+                                </View>
+                            </View>
 
-                        <View style={{ marginTop: 20 }}>
-                            <Button title="Login" onPress={handleLogin} />
+                            <View style={{ marginTop: 20 }}>
+                                <ButtonK title={'Login'} onPress={handleLogin} />
+                            </View>
+                            <View style={{ marginTop: 10 }}>
+                                <ButtonK title={'Login com biometria'} onPress={handleBiometricAuth} />
+                            </View>
                         </View>
-                        <View style={{ marginTop: 20 }}>
-                            <Button title="Login com biometria" onPress={handleBiometricAuth} />
-                        </View>
-                    </View>
-
-                </>
-            ) : null}
-        </View>
+                    </>
+                ) : null}
+            </View>
+        </ScreenWrapper>
     );
 };
 

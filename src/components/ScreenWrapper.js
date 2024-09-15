@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import { COLOR } from '../theme/Theme';
 
 export default function ScreenWrapper({ children }) {
     return (
@@ -11,6 +12,7 @@ export default function ScreenWrapper({ children }) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: COLOR.Background,
         flex: 1,
         padding: 16,
     },

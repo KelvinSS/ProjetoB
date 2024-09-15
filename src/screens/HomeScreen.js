@@ -3,6 +3,10 @@ import { View, FlatList, Text, Button, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AuthContext } from '../context/authContext';
+import { COLOR } from '../theme/Theme';
+
+import ButtonK from '../components/ButtonK';
+import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
 
 const groupExpensesByDate = (expenses) => {
@@ -88,20 +92,28 @@ export default function HomeScreen({ navigation }) {
                 fontSize: 40,
                 marginBottom: 20,
                 fontWeight: 'bold',
-                paddingTop: "20%"
+                paddingTop: "20%",
             }}>
                 Zenith
             </Text>
 
-            <Button title="Adicionar Gasto" onPress={() => navigation.navigate('AddExpense')} />
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
+                <ButtonMenu
+                    onPress={() => navigation.navigate('CreditExpenses')}
+                    title={'Ver Fatura'}
+                />
+                <ButtonMenu
+                    onPress={() => navigation.navigate('PlanningScreen')}
+                    title={'Planejamento'}
+                />
+            </View>
+
+            <ButtonK
+                title={'Adicionar Gasto'}
+                onPress={() => navigation.navigate('AddExpense')}
+            />
 
             <View style={{ flex: 1, marginTop: 30 }}>
-                <Text style={{
-                    alignSelf: 'center',
-                    justifyContent: 'center',
-                }}>
-                    Últimos lançamentos
-                </Text>
                 {groupedExpensesArray.length === 0 ? (
                     <Text style={{ textAlign: 'center', marginTop: 20 }}>
                         Nenhum gasto adicionado.
@@ -113,17 +125,30 @@ export default function HomeScreen({ navigation }) {
                         keyExtractor={item => item.date}
                         renderItem={({ item }) => (
                             <View>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{item.date}</Text>
+                                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
+                                    {item.date}
+                                </Text>
+
                                 {item.data.map(expense => (
                                     <TouchableOpacity
                                         key={expense.id}
                                         onPress={() => navigation.navigate('EditExpense', { id: expense.id })}
                                     >
-                                        <View style={{ height: 50, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', borderWidth: 1, borderColor: '#ccc', borderRadius: 5, alignItems: 'center', padding: 5 }}>
-                                            <Text>{expense.description} - R$ {expense.amount}</Text>
+                                        <View style={{
+                                            borderColor: COLOR.Grey,
+                                            height: 50,
+                                            marginBottom: 10,
+                                            borderRadius: 5,
+                                            borderWidth: 1,
+                                            justifyContent: 'space-between',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            padding: 5
+                                        }}>
+                                            <Text>{expense.description} - R$ {expense.amount.toFixed(2)}</Text>
                                             <Text>{expense.location ? expense.location : ''}</Text>
                                             {expense.payment ?
-                                                <View style={{ backgroundColor: '#ccc', width: 80, height: 30, alignItems: "center", justifyContent: 'center', borderRadius: 5 }}>
+                                                <View style={{ backgroundColor: COLOR.Grey, width: 80, height: 30, alignItems: "center", justifyContent: 'center', borderRadius: 5 }}>
                                                     <Text>{expense.payment}</Text>
                                                 </View>
                                                 : <Text></Text>}
@@ -137,7 +162,14 @@ export default function HomeScreen({ navigation }) {
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <View style={{ alignItems: 'center', padding: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 10 }}>
+                <View style={{
+                    alignItems: 'center',
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: COLOR.Black,
+                    borderRadius: 10,
+                    width: 150
+                }}>
                     <Text style={{ fontSize: 20 }}>Total Gasto:</Text>
                     <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {totalAmount.toFixed(2)}</Text>
                 </View>
@@ -148,38 +180,19 @@ export default function HomeScreen({ navigation }) {
                         padding: 10,
                         borderWidth: 1,
                         borderRadius: 10,
-                        borderColor: '#ccc',
+                        borderColor: COLOR.Black,
+                        width: 150,
                     }}>
-                    <Text style={{ fontSize: 20 }}>Total Saldo</Text>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: walletBalance >= 100 ? 'green' : walletBalance >= 1 ? '#ffcf33' : 'red', }}>R$ {walletBalance.toFixed(2)}</Text>
+                    <Text style={{ fontSize: 20 }}>Saldo Total</Text>
+                    <Text style={{
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        color: walletBalance >= 100 ? COLOR.Jade : walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red,
+                    }}>
+                        R$ {walletBalance.toFixed(2)}
+                    </Text>
                 </TouchableOpacity>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('CreditExpenses')}
-                    style={{
-                        alignItems: 'center',
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        padding: 10,
-                        marginTop: 10,
-                        borderColor: '#ccc',
-                    }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Ver Fatura</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('PlanningScreen')}
-                    style={{
-                        alignItems: 'center',
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        padding: 10,
-                        marginTop: 10,
-                        borderColor: '#ccc',
-                    }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Planejamento</Text>
-                </TouchableOpacity>
-            </View>
-        </ScreenWrapper>
+        </ScreenWrapper >
     );
 }
