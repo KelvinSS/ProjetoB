@@ -5,7 +5,9 @@ import { COLOR } from '../theme/Theme';
 export default function ScreenWrapper({ children }) {
     return (
         <View style={styles.container}>
-            {children}
+            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                {children}
+            </View>
         </View>
     )
 }
