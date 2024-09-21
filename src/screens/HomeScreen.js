@@ -1,10 +1,8 @@
 import React, { useContext } from 'react';
-import { View, FlatList, Text, Button, Alert } from 'react-native';
+import { View, FlatList, Text, Alert, TouchableOpacity } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { AuthContext } from '../context/authContext';
 import { COLOR, FONTE } from '../theme/Theme';
-
 import ButtonK from '../components/ButtonK';
 import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
@@ -35,7 +33,6 @@ export default function HomeScreen({ navigation }) {
             data: groupedExpenses[date]
         }))
         .sort((a, b) => {
-            // Converta a string da data para um objeto Date para garantir que a ordenação funcione corretamente
             const dateA = new Date(a.date.split('/').reverse().join('-'));
             const dateB = new Date(b.date.split('/').reverse().join('-'));
             return dateB - dateA;
@@ -48,110 +45,64 @@ export default function HomeScreen({ navigation }) {
             'Sair',
             'Deseja realmente sair?',
             [
-                {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                },
+                { text: 'Cancelar', style: 'cancel' },
                 {
                     text: 'Sair',
-                    style: 'default',
                     onPress: async () => {
                         await logout();
-                        navigation.replace('Login'); // Navega de volta para a tela de login
+                        navigation.replace('Login');
                     }
                 }
             ]
-        )
+        );
     };
 
     return (
         <ScreenWrapper>
-            <View style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: 10,
-            }}>
-                <TouchableOpacity
-                    onPress={handleLogout}
-                    style={{ alignSelf: 'center' }}
-                >
-                    <Text>SAIR</Text>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={handleLogout} style={styles.headerButton}>
+                    <Text style={styles.headerText}>SAIR</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => navigation.navigate('Config')}
-                    style={{ alignSelf: 'center' }}
-                >
-                    <Text>Config</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Config')} style={styles.headerButton}>
+                    <Text style={styles.headerText}>Config</Text>
                 </TouchableOpacity>
             </View>
 
-            <Text style={{
-                alignSelf: 'center',
-                justifyContent: 'center',
-                fontSize: 40,
-                marginBottom: 20,
-                fontWeight: 'bold',
-                paddingTop: "20%",
-            }}>
-                Zenith
+            <Text style={styles.title}>
+                <Text style={{ color: COLOR.Jade }}>Z</Text>enith
             </Text>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-                <ButtonMenu
-                    onPress={() => navigation.navigate('CreditExpenses')}
-                    title={'Ver Fatura'}
-                />
-                <ButtonMenu
-                    onPress={() => navigation.navigate('PlanningScreen')}
-                    title={'Planejamento'}
-                />
+            <View style={styles.menuButtonsContainer}>
+                <ButtonMenu onPress={() => navigation.navigate('CreditExpenses')} title={'Ver Fatura'} disabled />
+                <ButtonMenu onPress={() => navigation.navigate('PlanningScreen')} title={'Planejamento'} disabled />
             </View>
 
-            <ButtonK
-                title={'Adicionar Gasto'}
-                onPress={() => navigation.navigate('AddExpense')}
-            />
+            <ButtonK title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
 
-            <View style={{ flex: 1, marginTop: 30 }}>
+            <View style={styles.expensesContainer}>
                 {groupedExpensesArray.length === 0 ? (
-                    <Text style={{ textAlign: 'center', marginTop: 20 }}>
-                        Nenhum gasto adicionado.
-                    </Text>
+                    <Text style={styles.noExpensesText}>Nenhum gasto adicionado.</Text>
                 ) : (
                     <FlatList
-                        style={{ flex: 1, margin: 5 }}
                         data={groupedExpensesArray}
                         keyExtractor={item => item.date}
                         renderItem={({ item }) => (
                             <View>
-                                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>
-                                    {item.date}
-                                </Text>
-
+                                <Text style={styles.expenseDate}>{item.date}</Text>
                                 {item.data.map(expense => (
                                     <TouchableOpacity
                                         key={expense.id}
                                         onPress={() => navigation.navigate('EditExpense', { id: expense.id })}
                                     >
-                                        <View style={{
-                                            borderColor: COLOR.Grey,
-                                            height: 50,
-                                            marginBottom: 10,
-                                            borderRadius: 5,
-                                            borderWidth: 1,
-                                            justifyContent: 'space-between',
-                                            flexDirection: 'row',
-                                            alignItems: 'center',
-                                            padding: 5
-                                        }}>
+                                        <View style={[
+                                            styles.expenseItem,
+                                            { borderColor: expense.status === 'Pago' ? COLOR.Jade : COLOR.Grey }
+                                        ]}>
                                             <Text>{expense.description} - R$ {expense.amount.toFixed(2)}</Text>
-                                            <Text>{expense.location ? expense.location : ''}</Text>
-                                            {expense.payment ?
-                                                <View style={{ backgroundColor: COLOR.Grey, width: 80, height: 30, alignItems: "center", justifyContent: 'center', borderRadius: 5 }}>
-                                                    <Text>{expense.payment}</Text>
-                                                </View>
-                                                : <Text></Text>}
+                                            <Text>{expense.location || ''}</Text>
+                                            <View style={styles.statusContainer}>
+                                                <Text>{expense.payment || expense.status}</Text>
+                                            </View>
                                         </View>
                                     </TouchableOpacity>
                                 ))}
@@ -161,38 +112,124 @@ export default function HomeScreen({ navigation }) {
                 )}
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <View style={{
-                    alignItems: 'center',
-                    padding: 10,
-                    borderWidth: 1,
-                    borderColor: COLOR.Black,
-                    borderRadius: 10,
-                    width: 150
-                }}>
-                    <Text style={{ fontSize: 20 }}>Total Gasto:</Text>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>R$ {totalAmount.toFixed(2)}</Text>
+            <View style={styles.footer}>
+                <View style={styles.totalContainer}>
+                    <Text style={styles.totalText}>Total Gasto:</Text>
+                    <Text style={styles.totalAmount}>R$ {totalAmount.toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate('Config')}
-                    style={{
-                        alignItems: 'center',
-                        padding: 10,
-                        borderWidth: 1,
-                        borderRadius: 10,
-                        borderColor: COLOR.Black,
-                        width: 150,
-                    }}>
-                    <Text style={{ fontSize: 20 }}>Saldo Total</Text>
-                    <Text style={{
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: walletBalance >= 100 ? COLOR.Jade : walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red,
-                    }}>
+                    onPress={() => navigation.navigate('WalletScreen')}
+                    style={styles.walletContainer}
+                >
+                    <Text style={styles.walletText}>Carteira</Text>
+                    <Text style={[
+                        styles.walletAmount,
+                        {
+                            color: walletBalance >= 100 ? COLOR.Jade :
+                                walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red
+                        }
+                    ]}>
                         R$ {walletBalance.toFixed(2)}
                     </Text>
                 </TouchableOpacity>
             </View>
-        </ScreenWrapper >
+        </ScreenWrapper>
     );
 }
+
+const styles = {
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10,
+    },
+    headerButton: {
+        alignSelf: 'center',
+    },
+    headerText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: COLOR.Black,
+    },
+    title: {
+        fontSize: 40,
+        marginBottom: 20,
+        paddingTop: "20%",
+        alignSelf: 'center',
+        justifyContent: 'center',
+        fontFamily: FONTE.Bold,
+    },
+    menuButtonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 10,
+    },
+    expensesContainer: {
+        flex: 1,
+        marginTop: 30,
+    },
+    noExpensesText: {
+        textAlign: 'center',
+        marginTop: 20,
+        fontSize: 16,
+        color: COLOR.Grey,
+    },
+    expenseDate: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        marginBottom: 10,
+    },
+    expenseItem: {
+        height: 50,
+        borderRadius: 5,
+        borderWidth: 1,
+        padding: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    statusContainer: {
+        backgroundColor: COLOR.Grey,
+        width: 80,
+        height: 30,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 5,
+    },
+    footer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+    },
+    totalContainer: {
+        alignItems: 'center',
+        padding: 10,
+        borderWidth: 1,
+        borderColor: COLOR.Black,
+        borderRadius: 10,
+        width: 150,
+    },
+    totalText: {
+        fontSize: 20,
+    },
+    totalAmount: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    walletContainer: {
+        alignItems: 'center',
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: COLOR.Black,
+        width: 150,
+    },
+    walletText: {
+        fontSize: 20,
+    },
+    walletAmount: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+};
