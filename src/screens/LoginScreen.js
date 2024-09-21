@@ -4,13 +4,13 @@ import { AuthContext } from '../context/authContext';
 
 import ButtonK from '../components/ButtonK';
 import InputStyle from '../components/InputStyle';
-import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
+
+import { COLOR, FONTE } from '../theme/Theme';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');
     const [inputPassword, setInputPassword] = useState('');
-    const [viewOn, setViewOn] = useState(true);
     const { login, enableBiometricAuth, isLoggedIn } = useContext(AuthContext);
 
     useEffect(() => {
@@ -37,60 +37,39 @@ const LoginScreen = ({ navigation }) => {
         }
     };
 
-    const handleViewPassword = () => {
-        setViewOn(!viewOn);
-    };
-
     return (
         <ScreenWrapper>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                {!isLoggedIn ? (
-                    <>
-                        <Text style={{
-                            justifyContent: 'center',
-                            alignSelf: 'center',
-                            fontWeight: 'bold',
-                            fontSize: 40,
-                            marginBottom: 50,
-                        }}>
-                            Zenith
-                        </Text>
 
-                        <View style={{ width: '100%' }}>
-                            <InputStyle
-                                value={inputUsername}
-                                onChangeText={setInputUsername}
-                                placeholder={'Nome de usuário'}
-                            />
+            <View></View>
 
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                <InputStyle
-                                    value={inputPassword}
-                                    onChangeText={setInputPassword}
-                                    placeholder={'Senha'}
-                                    secureTextEntry={viewOn}
-                                    style={{ flex: 1 }}
-                                />
-                                <View style={{ position: 'absolute', right: 0, top: 4 }}>
-                                    <ButtonMenu
-                                        onPress={handleViewPassword}
-                                        title={'Ver'}
-                                        style={{ width: 65 }}
-                                        textStyle={{ fontSize: 12 }}
-                                    />
-                                </View>
-                            </View>
+            <Text style={{
+                fontSize: 40,
+                marginBottom: 20,
+                paddingTop: "20%",
+                alignSelf: 'center',
+                justifyContent: 'center',
+                fontFamily: FONTE.Bold
+            }}>
+                <Text style={{ color: COLOR.Jade }}>Z</Text>enith
+            </Text>
 
-                            <View style={{ marginTop: 20 }}>
-                                <ButtonK title={'Login'} onPress={handleLogin} />
-                            </View>
-                            <View style={{ marginTop: 10 }}>
-                                <ButtonK title={'Login com biometria'} onPress={handleBiometricAuth} />
-                            </View>
-                        </View>
-                    </>
-                ) : null}
+            <View>
+                <InputStyle
+                    value={inputUsername}
+                    onChangeText={setInputUsername}
+                    placeholder={'Nome de usuário'}
+                />
+                <InputStyle
+                    value={inputPassword}
+                    onChangeText={setInputPassword}
+                    placeholder={'Senha'}
+                    secureTextEntry={true}
+                />
+                <ButtonK title={'Login'} onPress={handleLogin} style={{ marginBottom: 10 }} />
+                <ButtonK title={'Login com biometria'} onPress={handleBiometricAuth} />
             </View>
+
+            <View></View>
         </ScreenWrapper>
     );
 };
