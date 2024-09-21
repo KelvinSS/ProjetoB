@@ -17,6 +17,6 @@ export const COLOR = {
 };
 
 export const FONTE = {
-    Regular: Montserrat_400Regular,
-    Bold: Montserrat_700Bold,
+    Regular: 'Montserrat_400Regular',
+    Bold: 'Montserrat_700Bold',
 };
