@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { Montserrat_400Regular, Montserrat_700Bold, useFonts } from "@expo-google-fonts/montserrat";
 
 import HomeScreen from './src/screens/HomeScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
@@ -13,6 +14,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import PlanningScreen from './src/screens/PlanningScreen';
 import AddRecurringExpenseScreen from './src/screens/AddRecurringExpenseScreen';
 import EditPlanningScreen from './src/screens/EditPlanningScreen';
+import WalletScreen from './src/screens/WalletScreen';
 
 import { AuthProvider, AuthContext } from './src/context/authContext';
 import { PlanningProvider } from './src/context/PlanningContext';
@@ -40,12 +42,25 @@ function AppNavigator() {
       <Stack.Screen name="Login" component={LoginScreen} options={{ header: () => null }} />
       <Stack.Screen name="AddRecurringExpense" component={AddRecurringExpenseScreen} options={{ title: 'Gasto recorrente' }} />
       <Stack.Screen name="EditPlanningScreen" component={EditPlanningScreen} options={{ title: 'Editar Gasto recorrente' }} />
+      <Stack.Screen name="WalletScreen" component={WalletScreen} options={{ title: 'Carteira' }} />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
+  let [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+  });
 
+  if (!fontsLoaded) {
+    return null;
+  };
+
+  return <AppContent />;
+}
+
+function AppContent() {
   useEffect(() => {
     const getPermissions = async () => {
       const { status } = await Notifications.getPermissionsAsync();
