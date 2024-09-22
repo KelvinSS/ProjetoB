@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { COLOR } from '../theme/Theme';
 
-const ButtonK = ({ onPress, title, style, textStyle }) => {
+const JadeButton  = ({ onPress, title, style, textStyle }) => {
     return (
         <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
             <Text style={[styles.buttonText, textStyle]}>{title}</Text>
@@ -29,4 +29,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ButtonK;
+export default JadeButton ;

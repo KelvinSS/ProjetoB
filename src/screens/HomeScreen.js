@@ -3,9 +3,11 @@ import { View, FlatList, Text, Alert, TouchableOpacity } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { AuthContext } from '../context/authContext';
 import { COLOR, FONTE } from '../theme/Theme';
-import ButtonK from '../components/ButtonK';
+import JadeButton from '../components/JadeButton';
 import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
+import Icon from 'react-native-vector-icons/Ionicons';
+import ZenithName from '../components/ZenithName';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -61,23 +63,29 @@ export default function HomeScreen({ navigation }) {
         <ScreenWrapper>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handleLogout} style={styles.headerButton}>
-                    <Text style={styles.headerText}>SAIR</Text>
+                    <Icon
+                        name={'exit-outline'}
+                        size={24}
+                        color={COLOR.Jade}
+                    />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => navigation.navigate('Config')} style={styles.headerButton}>
-                    <Text style={styles.headerText}>Config</Text>
+                    <Icon
+                        name={'construct-outline'}
+                        size={24}
+                        color={COLOR.Jade}
+                    />
                 </TouchableOpacity>
             </View>
 
-            <Text style={styles.title}>
-                <Text style={{ color: COLOR.Jade }}>Z</Text>enith
-            </Text>
+            <ZenithName />
 
             <View style={styles.menuButtonsContainer}>
-                <ButtonMenu onPress={() => navigation.navigate('CreditExpenses')} title={'Ver Fatura'} disabled />
-                <ButtonMenu onPress={() => navigation.navigate('PlanningScreen')} title={'Planejamento'} disabled />
+                <ButtonMenu onPress={() => navigation.navigate('CreditExpenses')} title={'Ver Fatura'} disabled style={{ marginRight: 5 }} />
+                <ButtonMenu onPress={() => navigation.navigate('PlanningScreen')} title={'Planejamento'} disabled style={{ marginLeft: 5 }} />
             </View>
 
-            <ButtonK title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
+            <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
 
             <View style={styles.expensesContainer}>
                 {groupedExpensesArray.length === 0 ? (
@@ -96,10 +104,19 @@ export default function HomeScreen({ navigation }) {
                                     >
                                         <View style={[
                                             styles.expenseItem,
-                                            { borderColor: expense.status === 'Pago' ? COLOR.Jade : COLOR.Grey }
+                                            {
+                                                borderColor:
+                                                    expense.status === 'Pago' ? COLOR.Jade :
+                                                        expense.status === 'Aguardando' ? COLOR.Gold1 :
+                                                            COLOR.Grey
+                                            }
                                         ]}>
-                                            <Text>{expense.description} - R$ {expense.amount.toFixed(2)}</Text>
-                                            <Text>{expense.location || ''}</Text>
+                                            <Text>
+                                                {expense.description} - R$ {expense.amount.toFixed(2)}
+                                                {`\n`}
+                                                {expense.location || ''}
+                                            </Text>
+
                                             <View style={styles.statusContainer}>
                                                 <Text>{expense.payment || expense.status}</Text>
                                             </View>
@@ -166,7 +183,7 @@ const styles = {
     },
     expensesContainer: {
         flex: 1,
-        marginTop: 30,
+        marginTop: 10,
     },
     noExpensesText: {
         textAlign: 'center',

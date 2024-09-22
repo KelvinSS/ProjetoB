@@ -1,66 +1,55 @@
 import React, { useContext, useState } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { ExpenseContext } from '../context/ExpenseContext';
-import ScreenWrapper from '../components/ScreenWrapper';
 import { Picker } from '@react-native-picker/picker';
+
+import ScreenWrapper from '../components/ScreenWrapper';
+import { ExpenseContext } from '../context/ExpenseContext';
+import { useDateUtils } from '../hooks/useDateUtils';
 import { COLOR } from '../theme/Theme';
 
 const CreditExpensesScreen = ({ navigation }) => {
     const { expenses, paymentDay } = useContext(ExpenseContext);
-    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Mês atual
 
-    // Função para converter data e garantir que seja tratada corretamente
-    const parseDate = (dateString) => {
-        const [day, month, year] = dateString.split('/');
-        return new Date(`${year}-${month}-${day}`);
-    };
+    const currentYear = new Date().getFullYear(); // Ano atual
+    const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()); // Mês atual
+    const [selectedYear, setSelectedYear] = useState(currentYear); // Ano selecionado
 
-    // Função para calcular o intervalo de fatura baseado no dia de fechamento
-    const getBillingPeriod = (month, paymentDay) => {
-        const currentYear = new Date().getFullYear();
+    const { formatDate, getBillingPeriod, isWithinBillingPeriod, parseDate } = useDateUtils(paymentDay);
 
-        // Selecione o mês anterior e o ano corretamente para o início da fatura
-        const previousMonth = month === 1 ? 12 : month - 1;
-        const yearForStart = month === 1 ? currentYear - 1 : currentYear;
+    // Obter o intervalo de faturamento para o mês e ano selecionados
+    const { startDate: startOfBilling, endDate: endOfBilling } = getBillingPeriod(
+        new Date(selectedYear, selectedMonth, paymentDay)
+    );
 
-        // Data de fechamento da fatura (mês atual, dia de pagamento)
-        const endOfBilling = new Date(currentYear, month - 1, paymentDay);
-
-        // Data de início da fatura (dia seguinte ao fechamento do mês anterior)
-        let startOfBilling = new Date(yearForStart, previousMonth - 1, paymentDay + 1);
-        //let startOfBilling = new Date(yearForStart, previousMonth - 1, paymentDay + 1);
-
-        // Ajuste para garantir que o início da fatura seja sempre o dia seguinte ao fechamento anterior
-        /* if (startOfBilling.getDate() > new Date(yearForStart, previousMonth, 10).getDate()) {
-            startOfBilling = new Date(currentYear, month - 1, 1); // Início no primeiro dia do mês atual
-        } */
-
-        return { startOfBilling, endOfBilling };
-    };
-
-    // Função para ajustar o final da data de faturamento para 23:59:59
-    const getEndOfBilling = (date) => {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
-    };
-
-    // Obter o intervalo de fatura do mês selecionado
-    const { startOfBilling, endOfBilling } = getBillingPeriod(selectedMonth, paymentDay);
-
-    // Ajustar o final da data de faturamento para 23:59:59
-    const adjustedEndOfBilling = getEndOfBilling(endOfBilling);
-
-    // Filtrar os gastos por meio de pagamento "crédito" e dentro do período de fatura
+    // Filtrar os gastos de crédito dentro do período de faturamento
     const creditExpenses = expenses.filter(expense => {
-        const expenseDate = new Date(parseDate(expense.date));
-        const normalizedStart = new Date(startOfBilling.getFullYear(), startOfBilling.getMonth(), startOfBilling.getDate());
-        const normalizedEnd = new Date(adjustedEndOfBilling.getFullYear(), adjustedEndOfBilling.getMonth(), adjustedEndOfBilling.getDate(), 23, 59, 59);
-
+        const expenseDate = parseDate(expense.date);
         return (
             expense.payment === 'Crédito' &&
-            expenseDate >= normalizedStart && // Comparação correta
-            expenseDate <= normalizedEnd // Comparação correta
+            isWithinBillingPeriod(expenseDate, startOfBilling, endOfBilling)
         );
     });
+
+    // Função para agrupar e ordenar despesas
+    const groupedCreditExpenses = creditExpenses.reduce((grouped, expense) => {
+        const date = expense.date;
+        if (!grouped[date]) {
+            grouped[date] = [];
+        }
+        grouped[date].push(expense);
+        return grouped;
+    }, {});
+
+    const groupedCreditExpensesArray = Object.keys(groupedCreditExpenses)
+        .map(date => ({
+            date,
+            data: groupedCreditExpenses[date]
+        }))
+        .sort((a, b) => {
+            const dateA = parseDate(a.date);
+            const dateB = parseDate(b.date);
+            return dateB - dateA;
+        });
 
     // Calcular o total dos gastos filtrados
     const totalCreditAmount = creditExpenses.reduce((total, expense) => total + expense.amount, 0);
@@ -74,40 +63,54 @@ const CreditExpensesScreen = ({ navigation }) => {
                 onValueChange={(itemValue) => setSelectedMonth(itemValue)}
                 style={styles.picker}
             >
-                <Picker.Item label="Janeiro" value={1} />
-                <Picker.Item label="Fevereiro" value={2} />
-                <Picker.Item label="Março" value={3} />
-                <Picker.Item label="Abril" value={4} />
-                <Picker.Item label="Maio" value={5} />
-                <Picker.Item label="Junho" value={6} />
-                <Picker.Item label="Julho" value={7} />
-                <Picker.Item label="Agosto" value={8} />
-                <Picker.Item label="Setembro" value={9} />
-                <Picker.Item label="Outubro" value={10} />
-                <Picker.Item label="Novembro" value={11} />
-                <Picker.Item label="Dezembro" value={12} />
+                <Picker.Item label="Janeiro" value={0} />
+                <Picker.Item label="Fevereiro" value={1} />
+                <Picker.Item label="Março" value={2} />
+                <Picker.Item label="Abril" value={3} />
+                <Picker.Item label="Maio" value={4} />
+                <Picker.Item label="Junho" value={5} />
+                <Picker.Item label="Julho" value={6} />
+                <Picker.Item label="Agosto" value={7} />
+                <Picker.Item label="Setembro" value={8} />
+                <Picker.Item label="Outubro" value={9} />
+                <Picker.Item label="Novembro" value={10} />
+                <Picker.Item label="Dezembro" value={11} />
+            </Picker>
+
+            <Picker
+                selectedValue={selectedYear}
+                onValueChange={(itemValue) => setSelectedYear(itemValue)}
+                style={styles.picker}
+            >
+                <Picker.Item label={`${currentYear}`} value={currentYear} />
+                <Picker.Item label={`${currentYear - 1}`} value={currentYear - 1} />
+                <Picker.Item label={`${currentYear - 2}`} value={currentYear - 2} />
             </Picker>
 
             {creditExpenses.length === 0 ? (
                 <Text style={styles.noExpenses}>Nenhum gasto com crédito.</Text>
             ) : (
                 <FlatList
-                    data={creditExpenses}
-                    keyExtractor={item => item.id.toString()}
+                    data={groupedCreditExpensesArray}
+                    keyExtractor={item => item.date}
                     renderItem={({ item }) => (
                         <View style={styles.expenseItem}>
-                            <Text>{item.description} - R$ {item.amount.toFixed(2)}</Text>
-                            <Text>{item.location ? item.location : ''}</Text>
                             <Text>{item.date}</Text>
+                            {item.data.map(expense => (
+                                <View key={expense.id} style={styles.expenseDetail}>
+                                    <Text>{expense.description} - R$ {expense.amount.toFixed(2)}</Text>
+                                    <Text>{expense.location ? expense.location : ''}</Text>
+                                </View>
+                            ))}
                         </View>
                     )}
                 />
             )}
 
             <Text style={styles.totalText}>Total: R$ {totalCreditAmount.toFixed(2)}</Text>
-            <Text>Pagar a fatura até o dia {paymentDay}/{selectedMonth}</Text>
-            <Text>Sua fatura iniciou dia {startOfBilling.toLocaleDateString()}</Text>
-            <Text>Sua fatura fechou dia {adjustedEndOfBilling.toLocaleDateString()}</Text>
+            <Text>Pagar a fatura até o dia {paymentDay}/{selectedMonth + 1}/{selectedYear}</Text>
+            <Text>Sua fatura iniciou dia {formatDate(startOfBilling)}</Text>
+            <Text>Sua fatura fechou dia {formatDate(endOfBilling)}</Text>
         </ScreenWrapper>
     );
 };
@@ -145,6 +148,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    expenseDetail: {
+        padding: 5,
     },
 });
 

@@ -5,7 +5,7 @@ import { PlanningContext } from '../context/PlanningContext';
 
 import { Picker } from '@react-native-picker/picker';
 import ScreenWrapper from '../components/ScreenWrapper';
-import ButtonK from '../components/ButtonK';
+import JadeButton from '../components/JadeButton';
 import { COLOR } from '../theme/Theme';
 
 const groupPlanningByDate = (planningExpenses) => {
@@ -31,11 +31,17 @@ export default function PlanningScreen({ navigation }) {
             data: groupedPlanning[date]
         }))
         .sort((a, b) => {
-            // Converta a string da data para um objeto Date para garantir que a ordenação funcione corretamente
-            const dateA = new Date(a.date.split('/').reverse().join('-'));
-            const dateB = new Date(b.date.split('/').reverse().join('-'));
+            const [dayA, monthA, yearA] = a.date.split('/');
+            const [dayB, monthB, yearB] = b.date.split('/');
+            const dateA = new Date(yearA, monthA - 1, dayA);
+            const dateB = new Date(yearB, monthB - 1, dayB);
             return dateB - dateA;
         });
+
+    const filteredPlanningArray = groupedPlanningArray.filter(item => {
+        const [day, month, year] = item.date.split('/');
+        return parseInt(month) === selectedMonth;
+    });
 
     return (
         <ScreenWrapper>
@@ -50,21 +56,21 @@ export default function PlanningScreen({ navigation }) {
                 ))}
             </Picker>
 
-            <ButtonK
+            <JadeButton
                 title={'Adicionar Gasto recorrente'}
                 onPress={() => navigation.navigate('AddRecurringExpense')}
                 style={{ marginTop: 10 }}
             />
 
             <Text style={{ marginTop: 20 }}>Gastos Recorrentes</Text>
-            {groupedPlanningArray.length === 0 ? (
+            {filteredPlanningArray.length === 0 ? (
                 <Text style={{ textAlign: 'center', marginTop: 20 }}>
-                    Nenhum gasto adicionado.
+                    Nenhum gasto adicionado para o mês selecionado.
                 </Text>
             ) : (
                 <FlatList
                     style={{ flex: 1, margin: 5 }}
-                    data={groupedPlanningArray}
+                    data={filteredPlanningArray}
                     keyExtractor={item => item.date}
                     renderItem={({ item }) => (
                         <View>
@@ -107,7 +113,6 @@ export default function PlanningScreen({ navigation }) {
                         </View>
                     )}
                 />
-
             )}
         </ScreenWrapper>
     );

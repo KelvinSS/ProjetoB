@@ -7,20 +7,6 @@ export const PlanningProvider = ({ children }) => {
     const [planningExpenses, setPlanningExpense] = useState([]);
 
     useEffect(() => {
-        const savePlanning = async () => {
-            try {
-                if (Array.isArray(planningExpenses)) {
-                    await AsyncStorage.setItem('planningExpenses', JSON.stringify(planningExpenses));
-                }
-            } catch (error) {
-                console.error('Erro ao salvar dados:', error);
-            }
-        };
-
-        savePlanning();
-    }, [planningExpenses]);
-
-    useEffect(() => {
         const loadPlanning = async () => {
             try {
                 const savedPlanning = await AsyncStorage.getItem('planningExpenses');
@@ -36,6 +22,20 @@ export const PlanningProvider = ({ children }) => {
 
         loadPlanning();
     }, []);
+
+    useEffect(() => {
+        const savePlanning = async () => {
+            try {
+                if (Array.isArray(planningExpenses)) {
+                    await AsyncStorage.setItem('planningExpenses', JSON.stringify(planningExpenses));
+                }
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+            }
+        };
+
+        savePlanning();
+    }, [planningExpenses]);
 
     const addPlanning = (planningExpense) => {
         setPlanningExpense((prevExpenses) => [...(prevExpenses || []), planningExpense]);

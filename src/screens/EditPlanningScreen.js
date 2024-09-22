@@ -5,8 +5,8 @@ import { Text, Alert } from 'react-native';
 import { PlanningContext } from '../context/PlanningContext'; // Importa o contexto
 
 import ScreenWrapper from '../components/ScreenWrapper';
-import InputStyle from '../components/InputStyle';
-import ButtonK from '../components/ButtonK';
+import InputStyle from '../components/FormInput';
+import JadeButton from '../components/JadeButton';
 import { COLOR } from '../theme/Theme';
 
 const EditPlanningScreen = ({ route, navigation }) => {
@@ -93,13 +93,13 @@ const EditPlanningScreen = ({ route, navigation }) => {
                 <Picker.Item label='Pago' value='Pago' />
             </Picker>
 
-            <ButtonK
+            <JadeButton
                 title="Salvar"
                 onPress={handleSave}
                 style={{ marginTop: 10 }}
             />
 
-            <ButtonK
+            <JadeButton
                 title={'Excluir'}
                 onPress={handleDelete}
                 style={{ backgroundColor: COLOR.Red, marginTop: 10 }}

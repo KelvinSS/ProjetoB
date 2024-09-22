@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, TextInput, Text, Alert } from 'react-native';
+import { StyleSheet, Text, Alert, View } from 'react-native';
+
 import { ExpenseContext } from '../context/ExpenseContext';
-import ScreenWrapper from '../components/ScreenWrapper'
-import Dropdown from '../components/Dropdawn';
-import InputReal from '../components/InputReal';
 import { COLOR } from '../theme/Theme';
-import ButtonK from '../components/ButtonK';
+import JadeButton from '../components/JadeButton';
+import Dropdown from '../components/Dropdown';
+import InputReal from '../components/MoneyInput';
+import InputStyle from '../components/FormInput';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 export default function AddExpenseScreen({ navigation }) {
     const [editDate, setEditDate] = useState(new Date().toLocaleDateString());
@@ -13,6 +15,10 @@ export default function AddExpenseScreen({ navigation }) {
     const [amount, setAmount] = useState('');
     const [location, setLocation] = useState('');
     const [payment, setPayment] = useState('Débito');
+    const [status, setStatus] = useState('Aguardando');
+    const [isRecurring, setIsRecurring] = useState(false);
+    const [recurrenceInterval, setRecurrenceInterval] = useState('Mensal');
+
     const { addExpense } = useContext(ExpenseContext);
 
     const handleAddExpense = () => {
@@ -27,9 +33,12 @@ export default function AddExpenseScreen({ navigation }) {
             id: Date.now(),
             description,
             amount: parseFloat(numericValue),
-            location,
-            payment,
             date: editDate,
+            location: isRecurring ? undefined : location,
+            payment: isRecurring ? undefined : payment,
+            isRecurring,
+            recurrenceInterval: isRecurring ? recurrenceInterval : undefined,
+            status: isRecurring ? status : undefined,
         };
 
         addExpense(newExpense);
@@ -38,22 +47,82 @@ export default function AddExpenseScreen({ navigation }) {
 
     return (
         <ScreenWrapper>
-            <Text style={styles.label}>Dia</Text>
-            <TextInput value={editDate} onChangeText={setEditDate} style={styles.input} />
+            <Dropdown
+                selectedValue={isRecurring}
+                onValueChange={setIsRecurring}
+                title={'Tipo de gasto'}
+                type={'recurrent'}
+            />
 
-            <Text style={styles.label}>Descrição<Text style={{ color: COLOR.Red }}>*</Text></Text>
-            <TextInput value={description} onChangeText={setDescription} style={styles.input} />
+            {isRecurring ? (
+                <>
+                    {/* Recorrente */}
+                    <Dropdown
+                        selectedValue={recurrenceInterval}
+                        onValueChange={setRecurrenceInterval}
+                        title={'Intervalo de Recorrência'}
+                        type={'recurrenceInterval'}
+                    />
 
-            <Text style={styles.label}>Valor<Text style={{ color: COLOR.Red }}>*</Text></Text>
-            <InputReal value={amount} onChangeText={setAmount} />
+                    <View>
+                        <InputStyle
+                            value={editDate}
+                            onChangeText={setEditDate}
+                            title={'Data'}
+                        />
+                        <InputStyle
+                            value={description}
+                            onChangeText={setDescription}
+                            titleRequired={'Descrição'}
+                        />
+                        <InputReal
+                            value={amount}
+                            onChangeText={setAmount}
+                            titleRequired={'Valor'}
+                        />
+                    </View>
 
-            <Text style={styles.label}>Local (Opcional)</Text>
-            <TextInput value={location} onChangeText={setLocation} style={styles.input} />
+                    <Dropdown
+                        selectedValue={status}
+                        onValueChange={setStatus}
+                        title={'Status'}
+                        type={'status'}
+                    />
+                </>
+            ) : (
+                <>
+                    {/* Diario */}
+                    <View>
+                        <InputStyle
+                            value={editDate}
+                            onChangeText={setEditDate}
+                            title={'Data'}
+                        />
+                        <InputStyle
+                            value={description}
+                            onChangeText={setDescription}
+                            titleRequired={'Descrição'}
+                        />
+                        <InputReal
+                            value={amount}
+                            onChangeText={setAmount}
+                            titleRequired={'Valor'}
+                        />
+                        <InputStyle
+                            value={location}
+                            onChangeText={setLocation}
+                            title={'Local'}
+                        />
+                    </View>
 
-            <Text style={styles.label}>Forma de pagamento</Text>
-            <Dropdown selectedValue={payment} onValueChange={setPayment} />
+                    <View>
+                        <Text style={styles.label}>Forma de pagamento</Text>
+                        <Dropdown selectedValue={payment} onValueChange={setPayment} type={'paymentType'} />
+                    </View>
+                </>
+            )}
 
-            <ButtonK title={'Adicionar Gasto'} onPress={handleAddExpense} />
+            <JadeButton  title={'Adicionar Gasto'} onPress={handleAddExpense} />
         </ScreenWrapper>
     );
 }
@@ -61,7 +130,8 @@ export default function AddExpenseScreen({ navigation }) {
 const styles = StyleSheet.create({
     label: {
         fontSize: 16,
-        marginBottom: 8,
+        marginBottom: 5,
+        fontWeight: 'bold'
     },
     input: {
         height: 40,
@@ -72,4 +142,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
     },
-})
+});

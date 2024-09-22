@@ -1,12 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, Alert } from 'react-native';
-import { AuthContext } from '../context/authContext';
-
-import ButtonK from '../components/ButtonK';
-import InputStyle from '../components/InputStyle';
-import ScreenWrapper from '../components/ScreenWrapper';
-
 import { COLOR, FONTE } from '../theme/Theme';
+import { AuthContext } from '../context/authContext';
+import InputStyle from '../components/FormInput';
+import JadeButton from '../components/JadeButton';
+import ScreenWrapper from '../components/ScreenWrapper';
+import ZenithName from '../components/ZenithName';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');
@@ -42,16 +41,7 @@ const LoginScreen = ({ navigation }) => {
 
             <View></View>
 
-            <Text style={{
-                fontSize: 40,
-                marginBottom: 20,
-                paddingTop: "20%",
-                alignSelf: 'center',
-                justifyContent: 'center',
-                fontFamily: FONTE.Bold
-            }}>
-                <Text style={{ color: COLOR.Jade }}>Z</Text>enith
-            </Text>
+            <ZenithName />
 
             <View>
                 <InputStyle
@@ -65,8 +55,8 @@ const LoginScreen = ({ navigation }) => {
                     placeholder={'Senha'}
                     secureTextEntry={true}
                 />
-                <ButtonK title={'Login'} onPress={handleLogin} style={{ marginBottom: 10 }} />
-                <ButtonK title={'Login com biometria'} onPress={handleBiometricAuth} />
+                <JadeButton title={'Login'} onPress={handleLogin} style={{ marginBottom: 10 }} />
+                <JadeButton title={'Login com biometria'} onPress={handleBiometricAuth} />
             </View>
 
             <View></View>

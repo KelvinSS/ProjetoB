@@ -5,7 +5,7 @@ import { COLOR } from '../theme/Theme';
 export default function ScreenWrapper({ children }) {
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1, justifyContent: 'space-between' }}>
+            <View style={styles.component}>
                 {children}
             </View>
         </View>
@@ -17,5 +17,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.Background,
         flex: 1,
         padding: 16,
+    },
+    component: {
+        flex: 1,
+        justifyContent: "space-between",
     },
 });

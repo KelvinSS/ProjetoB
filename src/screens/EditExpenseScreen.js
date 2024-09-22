@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
-import ScreenWrapper from '../components/ScreenWrapper';
-import Dropdown from '../components/Dropdawn';
-import InputReal from '../components/InputReal';
-import ButtonK from '../components/ButtonK';
 import { COLOR } from '../theme/Theme';
+import Dropdown from '../components/Dropdown';
+import InputReal from '../components/MoneyInput';
+import InputStyle from '../components/FormInput';
+import JadeButton from '../components/JadeButton';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -21,7 +22,10 @@ const EditExpenseScreen = ({ route, navigation }) => {
     const [newDescription, setNewDescription] = useState(expenseToEdit.description || '');
     const [newAmount, setNewAmount] = useState(expenseToEdit.amount ? expenseToEdit.amount.toString() : '');
     const [newLocation, setNewLocation] = useState(expenseToEdit.location || '');
-    const [newPayment, setNewPayment] = useState('Débito');
+    const [newPayment, setNewPayment] = useState(expenseToEdit.payment || '');
+    const [newIsRecurring, setNewIsRecurring] = useState(expenseToEdit.isRecurring || '');
+    const [newRecurrenceInterval, setNewRecurrenceInterval] = useState(expenseToEdit.recurrenceInterval || '');
+    const [newStatus, setNewStatus] = useState(expenseToEdit.status || '');
 
     const handleSave = () => {
         const numericValue = parseFloat(newAmount.replace(/[^\d,]/g, '').replace(',', '.'));
@@ -38,9 +42,13 @@ const EditExpenseScreen = ({ route, navigation }) => {
             location: newLocation,
             payment: newPayment,
             date: newEditDate,
+            isRecurring: newIsRecurring,
+            recurrenceInterval: newRecurrenceInterval,
+            status: newStatus,
         });
 
         navigation.goBack();
+        Alert.alert('', `${newDescription} Atualizado com sucesso.`)
     };
 
     const handleDelete = () => {
@@ -66,39 +74,83 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     return (
         <ScreenWrapper>
-            <Text style={styles.label}>Data</Text>
-            <TextInput
-                style={styles.input}
-                value={newEditDate}
-                onChangeText={setNewEditDate}
-            />
-            <Text style={styles.label}>Descrição</Text>
-            <TextInput
-                style={styles.input}
-                value={newDescription}
-                onChangeText={setNewDescription}
-            />
-            <Text style={styles.label}>Valor</Text>
-            <InputReal
-                value={newAmount}
-                onChangeText={setNewAmount}
-            />
+            {newIsRecurring ? (<>
+                <View>
+                    <Dropdown
+                        selectedValue={newPayment}
+                        onValueChange={setNewPayment}
+                        title={'Forma de pagamento'}
+                        type={'paymentType'}
+                    />
+                    <Dropdown
+                        selectedValue={newRecurrenceInterval}
+                        onValueChange={setNewRecurrenceInterval}
+                        title={'Intervalo de Recorrência'}
+                        type={'recurrenceInterval'}
+                    />
+                </View>
 
-            <Text style={styles.label}>Local (Opcional)</Text>
-            <TextInput
-                style={styles.input}
-                value={newLocation}
-                onChangeText={setNewLocation}
-            />
+                <View>
+                    <InputStyle
+                        value={newEditDate}
+                        onChangeText={setNewEditDate}
+                        title={'Data'}
+                    />
+                    <InputStyle
+                        value={newDescription}
+                        onChangeText={setNewDescription}
+                        title={'Descrição'}
+                    />
+                    <InputReal
+                        value={newAmount}
+                        onChangeText={setNewAmount}
+                        title={'Valor'}
+                    />
+                </View>
 
-            <Text style={styles.label}>Forma de pagamento</Text>
+                <Dropdown
+                    selectedValue={newStatus}
+                    onValueChange={setNewStatus}
+                    title={'Status'}
+                    type={'status'}
+                />
 
-            <Dropdown selectedValue={newPayment} onValueChange={setNewPayment} />
+            </>) : (<>
+                <Dropdown
+                    selectedValue={newPayment}
+                    onValueChange={setNewPayment}
+                    title={'Forma de pagamento'}
+                    type={'paymentType'}
+                />
 
-            <View style={{ height: 90, justifyContent: 'space-between' }}>
-                <ButtonK title={"Salvar"} onPress={handleSave} />
-                <ButtonK
-                    style={{ backgroundColor: COLOR.Red }}
+                <View>
+                    <InputStyle
+                        value={newEditDate}
+                        onChangeText={setNewEditDate}
+                        title={'Data'}
+                    />
+                    <InputStyle
+                        value={newDescription}
+                        onChangeText={setNewDescription}
+                        title={'Descrição'}
+                    />
+                    <InputReal
+                        value={newAmount}
+                        onChangeText={setNewAmount}
+                        title={'Valor'}
+                    />
+                    <InputStyle
+                        value={newLocation}
+                        onChangeText={setNewLocation}
+                        title={'Local'}
+                    />
+                </View>
+            </>)}
+
+            <View>
+                <JadeButton  title={"Salvar"} onPress={handleSave} />
+                <JadeButton 
+                    style={{ backgroundColor: COLOR.Red, marginTop: 10 }}
                     onPress={handleDelete}
                     title={"Deletar"}
                 />
@@ -106,25 +158,5 @@ const EditExpenseScreen = ({ route, navigation }) => {
         </ScreenWrapper>
     );
 };
-
-const styles = StyleSheet.create({
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-    },
-    input: {
-        height: 40,
-        borderColor: '#ccc',
-        borderWidth: 1,
-        borderRadius: 5,
-        paddingHorizontal: 10,
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    buttonArea: {
-        marginBottom: 20,
-        paddingBottom: 20
-    }
-});
 
 export default EditExpenseScreen;

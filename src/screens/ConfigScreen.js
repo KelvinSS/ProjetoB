@@ -1,17 +1,18 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { AuthContext } from '../context/authContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import InputStyle from '../components/FormInput';
+import JadeButton from '../components/JadeButton';
 import ScreenWrapper from '../components/ScreenWrapper';
-import ButtonK from '../components/ButtonK';
-import InputStyle from '../components/InputStyle';
 import ClearStorageButton from '../components/ClearStorageButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ConfigScreen({ navigation }) {
     const { username, login } = useContext(AuthContext);
 
     const [newUsername, setNewUsername] = useState(username || '');
     const [newPassword, setNewPassword] = useState('');
+    const [estouVendo, setEstouVendo] = useState('');
 
     const handleUpdateCredentials = async () => {
         if (newUsername && newPassword) {
@@ -26,6 +27,10 @@ export default function ConfigScreen({ navigation }) {
         } else {
             Alert.alert('Erro', 'Por favor, preencha ambos os campos de usuário e senha.');
         }
+    };
+
+    const handleVisao = async () => {
+        setEstouVendo(true);
     };
 
     return (
@@ -48,8 +53,15 @@ export default function ConfigScreen({ navigation }) {
             </View>
 
             <View>
-                <ButtonK onPress={handleUpdateCredentials} title="Atualizar Usuário" />
-                <ClearStorageButton />
+                <JadeButton onPress={handleUpdateCredentials} title="Atualizar Usuário" />
+                <JadeButton
+                    style={{ marginTop: 20 }}
+                    onPress={handleVisao}
+                    title={'Open the oblívio'}
+                />
+                {estouVendo && (
+                    <ClearStorageButton />
+                )}
             </View>
         </ScreenWrapper>
     );

@@ -1,13 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, TextInput, Text, Alert } from 'react-native';
-
 import { PlanningContext } from '../context/PlanningContext';
-
-import ScreenWrapper from '../components/ScreenWrapper';
-import ButtonK from '../components/ButtonK';
-import { Picker } from '@react-native-picker/picker';
 import { COLOR } from '../theme/Theme';
-import InputReal from '../components/InputReal';
+import { Picker } from '@react-native-picker/picker';
+import InputReal from '../components/MoneyInput';
+import JadeButton from '../components/JadeButton';
+import ScreenWrapper from '../components/ScreenWrapper';
+import FormInput from '../components/FormInput';
 
 export default function AddRecurringExpenseScreen({ navigation }) {
     const [editDate, setEditDate] = useState(new Date().toLocaleDateString());
@@ -43,6 +42,7 @@ export default function AddRecurringExpenseScreen({ navigation }) {
         <ScreenWrapper>
             <Text style={styles.label}>Dia de vencimento<Text style={styles.attention}>*</Text></Text>
             <TextInput value={editDate} onChangeText={setEditDate} style={styles.input} keyboardType='numeric' />
+            <FormInput value={editDate} onChangeText={setEditDate} style={styles.input} keyboardType='numeric' titleRequired={'Dia de vencimento'} />
 
             <Text style={styles.label}>Descrição<Text style={styles.attention}>*</Text></Text>
             <TextInput value={description} onChangeText={setDescription} style={styles.input} />
@@ -61,7 +61,7 @@ export default function AddRecurringExpenseScreen({ navigation }) {
                 <Picker.Item label='Pago' value='Pago' />
             </Picker>
 
-            <ButtonK title={'Adicionar Gasto'} onPress={handleAddExpense} style={{ marginTop: 10 }} />
+            <JadeButton title={'Adicionar Gasto'} onPress={handleAddExpense} style={{ marginTop: 10 }} />
         </ScreenWrapper>
     );
 }
