@@ -19,6 +19,7 @@ import WalletScreen from './src/screens/WalletScreen';
 import { AuthProvider, AuthContext } from './src/context/authContext';
 import { PlanningProvider } from './src/context/PlanningContext';
 import { ExpenseProvider } from './src/context/ExpenseContext';
+
 import { COLOR } from './src/theme/Theme';
 
 const Stack = createStackNavigator();
@@ -45,19 +46,6 @@ function AppNavigator() {
       <Stack.Screen name="WalletScreen" component={WalletScreen} options={{ title: 'Carteira' }} />
     </Stack.Navigator>
   );
-}
-
-export default function App() {
-  let [fontsLoaded] = useFonts({
-    Montserrat_400Regular,
-    Montserrat_700Bold,
-  });
-
-  if (!fontsLoaded) {
-    return null;
-  };
-
-  return <AppContent />;
 }
 
 function AppContent() {
@@ -93,4 +81,17 @@ function AppContent() {
       </ExpenseProvider>
     </AuthProvider>
   );
+}
+
+export default function App() {
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_700Bold,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return <AppContent />;
 }
