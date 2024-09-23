@@ -71,6 +71,10 @@ export const ExpenseProvider = ({ children }) => {
         setPaymentDay(newDay);
     };
 
+    const getExpensesByCategory = (category) => {
+        return expenses.filter(expense => expense.category === category);
+    };
+
     return (
         <ExpenseContext.Provider value={{
             expenses,
@@ -80,7 +84,8 @@ export const ExpenseProvider = ({ children }) => {
             updateExpense,
             updateWalletBalance,
             paymentDay,
-            updatePaymentDay
+            updatePaymentDay,
+            getExpensesByCategory,
         }}>
             {children}
         </ExpenseContext.Provider>

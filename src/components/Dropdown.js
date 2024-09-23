@@ -9,9 +9,11 @@ import {
     status,
     paymentPeriod,
     walletBalance,
+    months,
+    years,
 } from '../utils/dropdownOptions';
 
-export default function Dropdown({ selectedValue, onValueChange, type, title }) {
+export default function Dropdown({ selectedValue, onValueChange, type, title, width = '100%' }) {
     let options = [];
 
     if (type === 'paymentType') {
@@ -26,15 +28,16 @@ export default function Dropdown({ selectedValue, onValueChange, type, title }) 
         options = paymentPeriod;
     } else if (type === 'walletBalance') {
         options = walletBalance;
+    } else if (type === 'months') {
+        options = months;
+    } else if (type === 'years') {
+        options = years;
     }
 
     return (
-        <View>
+        <View style={[styles.container, { width }]}>
             {title && (
-                <Text style={styles.title}
-                >
-                    {title}
-                </Text>
+                <Text style={styles.title}>{title}</Text>
             )}
             <Picker
                 selectedValue={selectedValue}
@@ -48,7 +51,6 @@ export default function Dropdown({ selectedValue, onValueChange, type, title }) 
                 ))}
             </Picker>
         </View>
-
     );
 }
 
@@ -62,5 +64,8 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.Jade,
         color: COLOR.White,
         marginBottom: 10,
+    },
+    container: {
+        width: '100%',
     },
 });

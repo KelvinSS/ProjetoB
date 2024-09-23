@@ -58,6 +58,15 @@ export const useDateUtils = (paymentDay) => {
         return parseISO(dateString); // Exemplo: transforma "2024-09-16" em objeto Date
     };
 
+    const getCurrentMonth = () => {
+        const monthNames = [
+            'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+        ];
+        const currentMonthIndex = new Date().getMonth(); // Retorna o índice do mês (0 para janeiro, 11 para dezembro)
+        return monthNames[currentMonthIndex]; // Retorna o nome do mês atual
+    };
+
     // Uso do hook com memoização para evitar recalcular desnecessariamente
     return useMemo(() => ({
         formatDate,
@@ -65,5 +74,6 @@ export const useDateUtils = (paymentDay) => {
         isWithinBillingPeriod,
         getDaysDifference,
         parseDate,
+        getCurrentMonth,
     }), [paymentDay]);
 };

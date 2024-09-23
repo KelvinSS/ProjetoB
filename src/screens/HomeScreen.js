@@ -1,13 +1,15 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, FlatList, Text, Alert, TouchableOpacity } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { AuthContext } from '../context/authContext';
+import { useDateUtils } from '../hooks/useDateUtils';
 import { COLOR, FONTE } from '../theme/Theme';
 import JadeButton from '../components/JadeButton';
 import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ZenithName from '../components/ZenithName';
+import Dropdown from '../components/Dropdown';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -26,9 +28,21 @@ const calculateTotalAmount = (expenses) => {
 
 export default function HomeScreen({ navigation }) {
     const { logout } = useContext(AuthContext);
-    const { expenses, walletBalance } = useContext(ExpenseContext);
+    const { expenses, walletBalance, getExpensesByCategory } = useContext(ExpenseContext);
 
-    const groupedExpenses = groupExpensesByDate(expenses);
+    const { getCurrentMonth } = useDateUtils();
+    const currentMonth = getCurrentMonth(); // Obtém o nome do mês atual
+    const currentYear = new Date().getFullYear(); // Obtém o ano atual
+    const [selectedYear, setSelectedYear] = useState(currentYear.toString());
+    const [selectedMonth, setSelectedMonth] = useState(currentMonth)
+    const [category, setCategory] = useState(selectedMonth);
+
+    useEffect(() => {
+        setCategory(selectedMonth + selectedYear);
+    });
+
+    const groupedCategory = getExpensesByCategory(category);
+    const groupedExpenses = groupExpensesByDate(groupedCategory);
     const groupedExpensesArray = Object.keys(groupedExpenses)
         .map(date => ({
             date,
@@ -87,6 +101,21 @@ export default function HomeScreen({ navigation }) {
 
             <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
 
+            <View style={styles.dropdownContainer}>
+                <Dropdown
+                    selectedValue={selectedMonth}
+                    onValueChange={setSelectedMonth}
+                    type="months"
+                    width='48%'
+                />
+                <Dropdown
+                    selectedValue={selectedYear}
+                    onValueChange={setSelectedYear}
+                    type="years"
+                    width='48%'
+                />
+            </View>
+
             <View style={styles.expensesContainer}>
                 {groupedExpensesArray.length === 0 ? (
                     <Text style={styles.noExpensesText}>Nenhum gasto adicionado.</Text>
@@ -114,7 +143,7 @@ export default function HomeScreen({ navigation }) {
                                             <Text>
                                                 {expense.description} - R$ {expense.amount.toFixed(2)}
                                                 {`\n`}
-                                                {expense.location || ''}
+                                                {expense.location}
                                             </Text>
 
                                             <View style={styles.statusContainer}>
@@ -131,7 +160,7 @@ export default function HomeScreen({ navigation }) {
 
             <View style={styles.footer}>
                 <View style={styles.totalContainer}>
-                    <Text style={styles.totalText}>Total Gasto:</Text>
+                    <Text style={styles.totalText}>Total Gasto</Text>
                     <Text style={styles.totalAmount}>R$ {totalAmount.toFixed(2)}</Text>
                 </View>
                 <TouchableOpacity
@@ -158,7 +187,6 @@ const styles = {
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        padding: 10,
     },
     headerButton: {
         alignSelf: 'center',
@@ -171,7 +199,6 @@ const styles = {
     title: {
         fontSize: 40,
         marginBottom: 20,
-        paddingTop: "20%",
         alignSelf: 'center',
         justifyContent: 'center',
         fontFamily: FONTE.Bold,
@@ -183,7 +210,6 @@ const styles = {
     },
     expensesContainer: {
         flex: 1,
-        marginTop: 10,
     },
     noExpensesText: {
         textAlign: 'center',
@@ -249,4 +275,9 @@ const styles = {
         fontSize: 20,
         fontWeight: 'bold',
     },
+    dropdownContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 10,
+    }
 };
