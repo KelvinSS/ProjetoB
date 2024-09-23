@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { COLOR } from '../theme/Theme';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RText from './RText';
 
 const FormInput = ({
     value,
@@ -18,10 +19,10 @@ const FormInput = ({
     return (
         <View style={styles.container}>
             {title && (
-                <Text style={styles.title}>{title}</Text>
+                <RText style={styles.title}>{title}</RText>
             )}
             {titleRequired && (
-                <Text style={styles.title}>{titleRequired}<Text style={styles.titleRequired}> *</Text></Text>
+                <RText style={styles.title}>{titleRequired}<RText style={styles.titleRequired}> *</RText></RText>
             )}
             <View style={styles.inputContainer}>
                 <TextInput

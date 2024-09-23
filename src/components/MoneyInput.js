@@ -1,16 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MaskInput, { Masks } from 'react-native-mask-input';
 import { COLOR } from '../theme/Theme';
+import RText from './RText';
 
 const MoneyInput = ({ value, onChangeText, style, title, titleRequired }) => {
     return (
         <View>
             {title && (
-                <Text style={styles.title}>{title}</Text>
+                <RText style={styles.title}>{title}</RText>
             )}
             {titleRequired && (
-                <Text style={styles.title}>{titleRequired}<Text style={styles.titleRequired}> *</Text></Text>
+                <RText style={styles.title}>{titleRequired}<RText style={styles.titleRequired}> *</RText></RText>
             )}
             <MaskInput
                 value={value}

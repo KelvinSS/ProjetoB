@@ -1,13 +1,13 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { COLOR, FONTE } from "../theme/Theme";
-
+import RText from './RText';
 
 export default function ZenithName() {
     return (
         <View>
-            <Text style={styles.textContainer}>
-                <Text style={styles.textColor}>Z</Text>enith
-            </Text>
+            <RText style={styles.textContainer}>
+                <RText style={styles.textColor}>Z</RText>enith
+            </RText>
         </View>
     );
 };
@@ -23,5 +23,11 @@ const styles = {
     },
     textColor: {
         color: COLOR.Jade,
+        fontSize: 40,
+        marginBottom: 20,
+        paddingTop: "20%",
+        alignSelf: 'center',
+        justifyContent: 'center',
+        fontFamily: FONTE.Bold,
     },
 };

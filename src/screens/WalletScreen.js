@@ -1,12 +1,12 @@
 import { useState, useContext } from "react";
-import { Alert, Text, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { Alert, View } from "react-native";
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from "../theme/Theme";
-import JadeButton from "../components/JadeButton";
+import RText from '../components/RText';
 import Dropdown from "../components/Dropdown";
 import InputStyle from "../components/FormInput";
 import MoneyInput from "../components/MoneyInput";
+import JadeButton from "../components/JadeButton";
 import ScreenWrapper from "../components/ScreenWrapper";
 
 export default function WalletScreen({ navigation }) {
@@ -87,17 +87,17 @@ export default function WalletScreen({ navigation }) {
 
             <View>
                 <View style={styles.ballanceContainer}>
-                    <Text style={styles.text}>
+                    <RText style={styles.text}>
                         Saldo da carteira
-                    </Text>
-                    <Text style={[styles.text, {
+                    </RText>
+                    <RText style={[styles.text, {
                         color:
                             walletBalance >= 100 ? COLOR.Jade
                                 : walletBalance >= 1 ? COLOR.Gold1
                                     : COLOR.Red,
                     }]}>
                         R$ {walletBalance.toFixed(2)}
-                    </Text>
+                    </RText>
                 </View>
 
                 <JadeButton title={'Salvar'} onPress={handleUpdateWallet} />

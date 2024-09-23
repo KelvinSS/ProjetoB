@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
+import RText from '../components/RText';
 import ScreenWrapper from '../components/ScreenWrapper';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { useDateUtils } from '../hooks/useDateUtils';
@@ -56,7 +57,7 @@ const CreditExpensesScreen = ({ navigation }) => {
 
     return (
         <ScreenWrapper>
-            <Text style={styles.header}>Gastos com Crédito</Text>
+            <RText style={styles.header}>Gastos com Crédito</RText>
 
             <Picker
                 selectedValue={selectedMonth}
@@ -88,18 +89,18 @@ const CreditExpensesScreen = ({ navigation }) => {
             </Picker>
 
             {creditExpenses.length === 0 ? (
-                <Text style={styles.noExpenses}>Nenhum gasto com crédito.</Text>
+                <RText style={styles.noExpenses}>Nenhum gasto com crédito.</RText>
             ) : (
                 <FlatList
                     data={groupedCreditExpensesArray}
                     keyExtractor={item => item.date}
                     renderItem={({ item }) => (
                         <View style={styles.expenseItem}>
-                            <Text>{item.date}</Text>
+                            <RText>{item.date}</RText>
                             {item.data.map(expense => (
                                 <View key={expense.id} style={styles.expenseDetail}>
-                                    <Text>{expense.description} - R$ {expense.amount.toFixed(2)}</Text>
-                                    <Text>{expense.location ? expense.location : ''}</Text>
+                                    <RText>{expense.description} - R$ {expense.amount.toFixed(2)}</RText>
+                                    <RText>{expense.location ? expense.location : ''}</RText>
                                 </View>
                             ))}
                         </View>
@@ -107,10 +108,10 @@ const CreditExpensesScreen = ({ navigation }) => {
                 />
             )}
 
-            <Text style={styles.totalText}>Total: R$ {totalCreditAmount.toFixed(2)}</Text>
-            <Text>Pagar a fatura até o dia {paymentDay}/{selectedMonth + 1}/{selectedYear}</Text>
-            <Text>Sua fatura iniciou dia {formatDate(startOfBilling)}</Text>
-            <Text>Sua fatura fechou dia {formatDate(endOfBilling)}</Text>
+            <RText style={styles.totalText}>Total: R$ {totalCreditAmount.toFixed(2)}</RText>
+            <RText>Pagar a fatura até o dia {paymentDay}/{selectedMonth + 1}/{selectedYear}</RText>
+            <RText>Sua fatura iniciou dia {formatDate(startOfBilling)}</RText>
+            <RText>Sua fatura fechou dia {formatDate(endOfBilling)}</RText>
         </ScreenWrapper>
     );
 };

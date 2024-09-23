@@ -1,11 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, Alert } from 'react-native';
-import { COLOR, FONTE } from '../theme/Theme';
+import { View, Alert } from 'react-native';
 import { AuthContext } from '../context/authContext';
 import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
-import ScreenWrapper from '../components/ScreenWrapper';
 import ZenithName from '../components/ZenithName';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');

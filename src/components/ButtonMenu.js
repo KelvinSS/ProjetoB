@@ -1,6 +1,7 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import { COLOR } from '../theme/Theme';
+import RText from './RText';
 
 const ButtonMenu = ({ onPress, title, style, textStyle, disabled = false }) => {
     return (
@@ -9,9 +10,9 @@ const ButtonMenu = ({ onPress, title, style, textStyle, disabled = false }) => {
             style={[styles.button, style, disabled && styles.disabledButton]}
             disabled={disabled}
         >
-            <Text style={[styles.buttonText, textStyle, disabled && styles.disabledButtonText]}>
+            <RText style={[styles.buttonText, textStyle, disabled && styles.disabledButtonText]}>
                 {title}
-            </Text>
+            </RText>
         </TouchableOpacity>
     );
 };

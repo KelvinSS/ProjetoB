@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/authContext';
+import RText from '../components/RText';
 import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
 import ScreenWrapper from '../components/ScreenWrapper';
 import ClearStorageButton from '../components/ClearStorageButton';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ConfigScreen({ navigation }) {
     const { username, login } = useContext(AuthContext);
@@ -36,7 +37,7 @@ export default function ConfigScreen({ navigation }) {
     return (
         <ScreenWrapper>
             <View>
-                <Text style={styles.title}>Mudar Nome de Usuário</Text>
+                <RText style={styles.title}>Mudar Nome de Usuário</RText>
                 <InputStyle
                     value={newUsername}
                     onChangeText={setNewUsername}

@@ -1,11 +1,12 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import { COLOR } from '../theme/Theme';
+import RText from './RText';
 
 const JadeButton  = ({ onPress, title, style, textStyle }) => {
     return (
         <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-            <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+            <RText style={[styles.buttonText, textStyle]}>{title}</RText>
         </TouchableOpacity>
     );
 };
