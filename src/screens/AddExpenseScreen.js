@@ -62,80 +62,82 @@ export default function AddExpenseScreen({ navigation }) {
 
     return (
         <ScreenWrapper>
-            <Dropdown
-                selectedValue={isRecurring}
-                onValueChange={setIsRecurring}
-                title={'Tipo de gasto'}
-                type={'recurrent'}
-            />
+            <View>
+                <Dropdown
+                    selectedValue={isRecurring}
+                    onValueChange={setIsRecurring}
+                    title={'Tipo de gasto'}
+                    type={'recurrent'}
+                />
 
-            {isRecurring ? (
-                <>
-                    {/* Recorrente */}
-                    <Dropdown
-                        selectedValue={recurrenceInterval}
-                        onValueChange={setRecurrenceInterval}
-                        title={'Intervalo de Recorrência'}
-                        type={'recurrenceInterval'}
-                    />
+                {isRecurring ? (
+                    <>
+                        {/* Recorrente */}
+                        <Dropdown
+                            selectedValue={recurrenceInterval}
+                            onValueChange={setRecurrenceInterval}
+                            title={'Intervalo de Recorrência'}
+                            type={'recurrenceInterval'}
+                        />
 
-                    <View>
-                        <InputStyle
-                            value={editDate}
-                            onChangeText={setEditDate}
-                            title={'Data'}
-                        />
-                        <InputStyle
-                            value={description}
-                            onChangeText={setDescription}
-                            titleRequired={'Descrição'}
-                        />
-                        <InputReal
-                            value={amount}
-                            onChangeText={setAmount}
-                            titleRequired={'Valor'}
-                        />
-                    </View>
+                        <View>
+                            <InputStyle
+                                value={editDate}
+                                onChangeText={setEditDate}
+                                title={'Data'}
+                            />
+                            <InputStyle
+                                value={description}
+                                onChangeText={setDescription}
+                                titleRequired={'Descrição'}
+                            />
+                            <InputReal
+                                value={amount}
+                                onChangeText={setAmount}
+                                titleRequired={'Valor'}
+                            />
+                        </View>
 
-                    <Dropdown
-                        selectedValue={status}
-                        onValueChange={setStatus}
-                        title={'Status'}
-                        type={'status'}
-                    />
-                </>
-            ) : (
-                <>
-                    {/* Diario */}
-                    <View>
-                        <InputStyle
-                            value={editDate}
-                            onChangeText={setEditDate}
-                            title={'Data'}
+                        <Dropdown
+                            selectedValue={status}
+                            onValueChange={setStatus}
+                            title={'Status'}
+                            type={'status'}
                         />
-                        <InputStyle
-                            value={description}
-                            onChangeText={setDescription}
-                            titleRequired={'Descrição'}
-                        />
-                        <InputReal
-                            value={amount}
-                            onChangeText={setAmount}
-                            titleRequired={'Valor'}
-                        />
-                        <InputStyle
-                            value={location}
-                            onChangeText={setLocation}
-                            title={'Local'}
-                        />
-                    </View>
+                    </>
+                ) : (
+                    <>
+                        {/* Diario */}
+                        <View>
+                            <InputStyle
+                                value={editDate}
+                                onChangeText={setEditDate}
+                                title={'Data'}
+                            />
+                            <InputStyle
+                                value={description}
+                                onChangeText={setDescription}
+                                titleRequired={'Descrição'}
+                            />
+                            <InputReal
+                                value={amount}
+                                onChangeText={setAmount}
+                                titleRequired={'Valor'}
+                            />
+                            <InputStyle
+                                value={location}
+                                onChangeText={setLocation}
+                                title={'Local'}
+                            />
+                        </View>
 
-                    <View>
-                        <RText style={styles.label}>Forma de pagamento</RText>
-                        <Dropdown selectedValue={payment} onValueChange={setPayment} type={'paymentType'} />
-                    </View>
-                </>
-            )}
+                        <View>
+                            <RText style={styles.label}>Forma de pagamento</RText>
+                            <Dropdown selectedValue={payment} onValueChange={setPayment} type={'paymentType'} />
+                        </View>
+                    </>
+                )}
+            </View>
 
             <JadeButton title={'Adicionar Gasto'} onPress={handleAddExpense} />
         </ScreenWrapper>
