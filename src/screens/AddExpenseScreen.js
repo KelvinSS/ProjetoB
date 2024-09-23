@@ -1,13 +1,16 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, Alert, View } from 'react-native';
-
+import { StyleSheet, Alert, View } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from '../theme/Theme';
-import JadeButton from '../components/JadeButton';
+import RText from '../components/RText';
 import Dropdown from '../components/Dropdown';
 import InputReal from '../components/MoneyInput';
 import InputStyle from '../components/FormInput';
+import JadeButton from '../components/JadeButton';
 import ScreenWrapper from '../components/ScreenWrapper';
+
+import { format, parse, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function AddExpenseScreen({ navigation }) {
     const [editDate, setEditDate] = useState(new Date().toLocaleDateString());
@@ -22,6 +25,17 @@ export default function AddExpenseScreen({ navigation }) {
     const { addExpense } = useContext(ExpenseContext);
 
     const handleAddExpense = () => {
+        const parsedDate = parse(editDate, 'dd/MM/yyyy', new Date());
+
+        if (!isValid(parsedDate)) {
+            Alert.alert('Atenção!', 'A data inserida está no formato incorreto');
+            return;
+        }
+
+        const newMonthName = format(parsedDate, 'MMMM', { locale: ptBR });
+        const formattedMonthName = newMonthName.charAt(0).toUpperCase() + newMonthName.slice(1);
+        const newYear = format(parsedDate, 'yyyy');
+
         const numericValue = parseFloat(amount.replace(/[^\d,]/g, '').replace(',', '.'));
 
         if (!description || !amount) {
@@ -39,6 +53,7 @@ export default function AddExpenseScreen({ navigation }) {
             isRecurring,
             recurrenceInterval: isRecurring ? recurrenceInterval : undefined,
             status: isRecurring ? status : undefined,
+            category: formattedMonthName + newYear,
         };
 
         addExpense(newExpense);
@@ -116,13 +131,13 @@ export default function AddExpenseScreen({ navigation }) {
                     </View>
 
                     <View>
-                        <Text style={styles.label}>Forma de pagamento</Text>
+                        <RText style={styles.label}>Forma de pagamento</RText>
                         <Dropdown selectedValue={payment} onValueChange={setPayment} type={'paymentType'} />
                     </View>
                 </>
             )}
 
-            <JadeButton  title={'Adicionar Gasto'} onPress={handleAddExpense} />
+            <JadeButton title={'Adicionar Gasto'} onPress={handleAddExpense} />
         </ScreenWrapper>
     );
 }

@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, FlatList, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, FlatList, Alert, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { AuthContext } from '../context/authContext';
 import { useDateUtils } from '../hooks/useDateUtils';
 import { COLOR, FONTE } from '../theme/Theme';
+import RText from '../components/RText';
 import JadeButton from '../components/JadeButton';
 import ButtonMenu from '../components/ButtonMenu';
 import ScreenWrapper from '../components/ScreenWrapper';
-import Icon from 'react-native-vector-icons/Ionicons';
 import ZenithName from '../components/ZenithName';
 import Dropdown from '../components/Dropdown';
 
@@ -31,15 +32,15 @@ export default function HomeScreen({ navigation }) {
     const { expenses, walletBalance, getExpensesByCategory } = useContext(ExpenseContext);
 
     const { getCurrentMonth } = useDateUtils();
-    const currentMonth = getCurrentMonth(); // Obtém o nome do mês atual
-    const currentYear = new Date().getFullYear(); // Obtém o ano atual
+    const currentMonth = getCurrentMonth(); // Pega nome do mês atual
+    const currentYear = new Date().getFullYear(); // Pega o ano atual
     const [selectedYear, setSelectedYear] = useState(currentYear.toString());
     const [selectedMonth, setSelectedMonth] = useState(currentMonth)
     const [category, setCategory] = useState(selectedMonth);
 
     useEffect(() => {
         setCategory(selectedMonth + selectedYear);
-    });
+    }, [selectedMonth, selectedYear]);
 
     const groupedCategory = getExpensesByCategory(category);
     const groupedExpenses = groupExpensesByDate(groupedCategory);
@@ -53,8 +54,7 @@ export default function HomeScreen({ navigation }) {
             const dateB = new Date(b.date.split('/').reverse().join('-'));
             return dateB - dateA;
         });
-
-    const totalAmount = calculateTotalAmount(expenses);
+    const totalAmount = calculateTotalAmount(groupedCategory);
 
     const handleLogout = async () => {
         Alert.alert(
@@ -118,14 +118,14 @@ export default function HomeScreen({ navigation }) {
 
             <View style={styles.expensesContainer}>
                 {groupedExpensesArray.length === 0 ? (
-                    <Text style={styles.noExpensesText}>Nenhum gasto adicionado.</Text>
+                    <RText style={styles.noExpensesText}>Nenhum gasto adicionado.</RText>
                 ) : (
                     <FlatList
                         data={groupedExpensesArray}
                         keyExtractor={item => item.date}
                         renderItem={({ item }) => (
                             <View>
-                                <Text style={styles.expenseDate}>{item.date}</Text>
+                                <RText style={styles.expenseDate}>{item.date}</RText>
                                 {item.data.map(expense => (
                                     <TouchableOpacity
                                         key={expense.id}
@@ -140,14 +140,14 @@ export default function HomeScreen({ navigation }) {
                                                             COLOR.Grey
                                             }
                                         ]}>
-                                            <Text>
+                                            <RText>
                                                 {expense.description} - R$ {expense.amount.toFixed(2)}
                                                 {`\n`}
                                                 {expense.location}
-                                            </Text>
+                                            </RText>
 
                                             <View style={styles.statusContainer}>
-                                                <Text>{expense.payment || expense.status}</Text>
+                                                <RText>{expense.payment || expense.status}</RText>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -160,15 +160,15 @@ export default function HomeScreen({ navigation }) {
 
             <View style={styles.footer}>
                 <View style={styles.totalContainer}>
-                    <Text style={styles.totalText}>Total Gasto</Text>
-                    <Text style={styles.totalAmount}>R$ {totalAmount.toFixed(2)}</Text>
+                    <RText style={styles.totalText}>Total Gasto</RText>
+                    <RText style={styles.totalAmount}>R$ {totalAmount.toFixed(2)}</RText>
                 </View>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('WalletScreen')}
                     style={styles.walletContainer}
                 >
-                    <Text style={styles.walletText}>Carteira</Text>
-                    <Text style={[
+                    <RText style={styles.walletText}>Carteira</RText>
+                    <RText style={[
                         styles.walletAmount,
                         {
                             color: walletBalance >= 100 ? COLOR.Jade :
@@ -176,7 +176,7 @@ export default function HomeScreen({ navigation }) {
                         }
                     ]}>
                         R$ {walletBalance.toFixed(2)}
-                    </Text>
+                    </RText>
                 </TouchableOpacity>
             </View>
         </ScreenWrapper>

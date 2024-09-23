@@ -8,6 +8,9 @@ import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
 import ScreenWrapper from '../components/ScreenWrapper';
 
+import { format, parse, isValid } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
     const { expenses, updateExpense, deleteExpense } = useContext(ExpenseContext);
@@ -28,6 +31,16 @@ const EditExpenseScreen = ({ route, navigation }) => {
     const [newStatus, setNewStatus] = useState(expenseToEdit.status || '');
 
     const handleSave = () => {
+        const parsedDate = parse(newEditDate, 'dd/MM/yyyy', new Date());
+
+        if (!isValid(parsedDate)) {
+            Alert.alert('Atenção!', 'A data inserida está no formato incorreto');
+            return;
+        }
+
+        const newMonthName = format(parsedDate, 'MMMM', { locale: ptBR });
+        const formattedMonthName = newMonthName.charAt(0).toUpperCase() + newMonthName.slice(1);
+        const newYear = format(parsedDate, 'yyyy');
         const numericValue = parseFloat(newAmount.replace(/[^\d,]/g, '').replace(',', '.'));
 
         if (!newDescription || !newAmount) {
@@ -45,6 +58,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
             isRecurring: newIsRecurring,
             recurrenceInterval: newRecurrenceInterval,
             status: newStatus,
+            category: formattedMonthName + newYear,
         });
 
         navigation.goBack();
@@ -148,8 +162,8 @@ const EditExpenseScreen = ({ route, navigation }) => {
             </>)}
 
             <View>
-                <JadeButton  title={"Salvar"} onPress={handleSave} />
-                <JadeButton 
+                <JadeButton title={"Salvar"} onPress={handleSave} />
+                <JadeButton
                     style={{ backgroundColor: COLOR.Red, marginTop: 10 }}
                     onPress={handleDelete}
                     title={"Deletar"}
