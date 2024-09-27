@@ -12,12 +12,13 @@ const FormInput = ({
     secureTextEntry,
     keyboardType,
     title,
-    titleRequired
+    titleRequired,
+    width = '100%'
 }) => {
     const [isPasswordVisible, setPasswordVisible] = useState(false);
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { width }]}>
             {title && (
                 <RText style={styles.title}>{title}</RText>
             )}
@@ -40,7 +41,7 @@ const FormInput = ({
                     >
                         <Icon
                             name={isPasswordVisible ? 'eye-off' : 'eye'}
-                            size={24}
+                            size={20}
                             color={COLOR.Jade}
                         />
                     </TouchableOpacity>
@@ -53,6 +54,7 @@ const FormInput = ({
 const styles = StyleSheet.create({
     container: {
         marginBottom: 10,
+        width: '100%'
     },
     inputContainer: {
         flexDirection: 'row',
