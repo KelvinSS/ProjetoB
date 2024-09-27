@@ -2,15 +2,15 @@ import React, { useState, useContext } from 'react';
 import { StyleSheet, Alert, View } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from '../theme/Theme';
+import { format, parse, isValid, addMonths, setDate } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import uuid from 'react-native-uuid';
 import RText from '../components/RText';
 import Dropdown from '../components/Dropdown';
 import InputReal from '../components/MoneyInput';
 import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
 import ScreenWrapper from '../components/ScreenWrapper';
-
-import { format, parse, isValid } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 
 export default function AddExpenseScreen({ navigation }) {
     const [editDate, setEditDate] = useState(new Date().toLocaleDateString());
@@ -19,7 +19,7 @@ export default function AddExpenseScreen({ navigation }) {
     const [location, setLocation] = useState('');
     const [payment, setPayment] = useState('Débito');
     const [status, setStatus] = useState('Aguardando');
-    const [isRecurring, setIsRecurring] = useState(false);
+    const [isRecurring, setIsRecurring] = useState('Diário');
     const [recurrenceInterval, setRecurrenceInterval] = useState('Mensal');
 
     const { addExpense } = useContext(ExpenseContext);
@@ -43,21 +43,58 @@ export default function AddExpenseScreen({ navigation }) {
             return;
         }
 
-        const newExpense = {
-            id: Date.now(),
-            description,
-            amount: parseFloat(numericValue),
-            date: editDate,
-            location: isRecurring ? undefined : location,
-            payment: isRecurring ? undefined : payment,
-            isRecurring,
-            recurrenceInterval: isRecurring ? recurrenceInterval : undefined,
-            status: isRecurring ? status : undefined,
-            category: formattedMonthName + newYear,
-        };
+        if (isRecurring === 'Diário') {
+            const newExpense = {
+                isRecurring,
+                id: Date.now(),
+                description,
+                amount: parseFloat(numericValue),
+                date: editDate,
+                location: location,
+                payment: payment,
+                category: formattedMonthName + newYear,
+            };
 
-        addExpense(newExpense);
-        navigation.goBack();
+            addExpense(newExpense);
+            navigation.goBack();
+
+        }
+        else if (isRecurring === 'Recorrente') {
+            let currentMonthDate = parsedDate;
+            const endOfYear = new Date(format(parsedDate, 'yyyy'), 11, 31);
+
+            const selectedDay = parseInt(format(parsedDate, 'd'));
+            const expensesToAdd = [];
+
+            while (currentMonthDate <= endOfYear) {
+                const formattedMonthName = format(currentMonthDate, 'MMMM', { locale: ptBR }).charAt(0).toUpperCase() + format(currentMonthDate, 'MMMM', { locale: ptBR }).slice(1);
+                const newYear = format(currentMonthDate, 'yyyy');
+
+                const lastDayOfMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 0).getDate();
+                const adjustedDay = selectedDay > lastDayOfMonth ? lastDayOfMonth : selectedDay;
+
+                currentMonthDate = setDate(currentMonthDate, adjustedDay);
+
+                const newExpense = {
+                    isRecurring,
+                    id: uuid.v4(),
+                    description,
+                    amount: parseFloat(numericValue),
+                    date: format(currentMonthDate, 'dd/MM/yyyy'),
+                    location: location,
+                    recurrenceInterval: recurrenceInterval,
+                    status: status,
+                    category: formattedMonthName + newYear,
+                };
+
+                expensesToAdd.push(newExpense);
+                currentMonthDate = addMonths(currentMonthDate, 1);
+            }
+
+            expensesToAdd.forEach(expense => addExpense(expense));
+
+            navigation.goBack();
+        };
     };
 
     return (
@@ -70,7 +107,7 @@ export default function AddExpenseScreen({ navigation }) {
                     type={'recurrent'}
                 />
 
-                {isRecurring ? (
+                {isRecurring === 'Recorrente' ? (
                     <>
                         {/* Recorrente */}
                         <Dropdown
@@ -105,7 +142,7 @@ export default function AddExpenseScreen({ navigation }) {
                             type={'status'}
                         />
                     </>
-                ) : (
+                ) : isRecurring === 'Diário' ? (
                     <>
                         {/* Diario */}
                         <View>
@@ -136,7 +173,7 @@ export default function AddExpenseScreen({ navigation }) {
                             <Dropdown selectedValue={payment} onValueChange={setPayment} type={'paymentType'} />
                         </View>
                     </>
-                )}
+                ) : ''}
             </View>
 
             <JadeButton title={'Adicionar Gasto'} onPress={handleAddExpense} />

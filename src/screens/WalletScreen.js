@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Alert, View } from "react-native";
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from "../theme/Theme";
@@ -10,32 +10,84 @@ import JadeButton from "../components/JadeButton";
 import ScreenWrapper from "../components/ScreenWrapper";
 
 export default function WalletScreen({ navigation }) {
-    const { walletBalance, updateWalletBalance } = useContext(ExpenseContext);
+    const {
+        walletBalance,
+        updateWalletBalance,
+        updatePaymentDay,
+        updateAdvancePaymentDay,
+        advancePaymentDay,
+        paymentDay
+    } = useContext(ExpenseContext);
 
-    const [paymentPeriod, setPaymentPeriod] = useState('Mensal')
-    const [paymentDay, setPaymentDay] = useState('')
-    const [paymentDayVale, setPaymentDayVale] = useState('')
+    const [paymentPeriod, setPaymentPeriod] = useState('CLT');
     const [saldo, setSaldo] = useState('');
     const [operation, setOperation] = useState('add');
 
-    const handleUpdateWallet = () => {
-        const numericValue = parseFloat(saldo.replace(/[^\d,]/g, '').replace(',', '.'));
+    const [paymentDayInput, setPaymentDayInput] = useState(paymentDay ? paymentDay.toString() : '1');
+    const [advancePaymentDayInput, setAdvancePaymentDayInput] = useState(advancePaymentDay ? advancePaymentDay.toString() : '');
 
-        if (isNaN(numericValue)) {
-            Alert.alert('Erro', 'Insira um valor válido.');
-            return;
+    const [initialWalletBalance, setInitialWalletBalance] = useState(walletBalance);
+    const [initialPaymentDay, setInitialPaymentDay] = useState(paymentDay);
+    const [initialAdvancePaymentDay, setInitialAdvancePaymentDay] = useState(advancePaymentDay);
+
+    useEffect(() => {
+        setInitialWalletBalance(walletBalance);
+        setInitialPaymentDay(paymentDay);
+        setInitialAdvancePaymentDay(advancePaymentDay);
+    }, [walletBalance, paymentDay, advancePaymentDay]);
+
+    const handleSave = () => {
+        let updatedFields = [];
+
+        // Verifica e atualiza o saldo
+        if (saldo) {
+            const numericValue = parseFloat(saldo.replace(/[^\d,]/g, '').replace(',', '.'));
+
+            if (isNaN(numericValue)) {
+                Alert.alert('Erro', 'Insira um valor válido.');
+                return;
+            }
+
+            if (operation === 'remove' && walletBalance < numericValue) {
+                Alert.alert('Erro', 'Saldo insuficiente para remover esse valor.');
+                return;
+            }
+
+            const updatedBalance = operation === 'add'
+                ? walletBalance + numericValue
+                : walletBalance - numericValue;
+
+            if (updatedBalance !== initialWalletBalance) {
+                updateWalletBalance(updatedBalance);
+                updatedFields.push(`saldo da carteira foi ${operation === 'add' ? 'adicionado' : 'removido'} R$ ${numericValue.toFixed(2)}`);
+            }
         }
 
-        const updatedBalance = operation === 'add'
-            ? walletBalance + numericValue
-            : walletBalance - numericValue
+        // Verifica e atualiza o dia de pagamento
+        if (parseInt(paymentDayInput, 10) !== initialPaymentDay) {
+            updatePaymentDay(parseInt(paymentDayInput, 10));
+            updatedFields.push('Dia do pagamento atualizado');
+        }
 
-        updateWalletBalance(updatedBalance);
+        // Verifica e atualiza o dia do vale
+        if (advancePaymentDayInput && parseInt(advancePaymentDayInput, 10) !== initialAdvancePaymentDay) {
+            updateAdvancePaymentDay(parseInt(advancePaymentDayInput, 10));
+            updatedFields.push('Dia do vale atualizado');
+        }
+
+        if (!advancePaymentDayInput && initialAdvancePaymentDay !== null) {
+            updateAdvancePaymentDay(null);
+            updatedFields.push('Dia do vale removido');
+        }
+
+        // Mostra o alerta com as alterações
+        if (updatedFields.length > 0) {
+            Alert.alert('Atualizações', `As seguintes alterações foram feitas: ${updatedFields.join(', ')}.`);
+        } else {
+            Alert.alert('Nenhuma alteração', 'Ué, tu nem mudou nada doido!');
+        }
+
         navigation.goBack();
-        Alert.alert(
-            'Carteira Atualizada',
-            `Foi ${operation === 'add' ? 'adicionado' : 'removido'} da sua carteira R$ ${numericValue.toFixed(2)}`
-        );
     };
 
     return (
@@ -48,28 +100,27 @@ export default function WalletScreen({ navigation }) {
                     title={'Periodo de Pagamento'}
                 />
 
-                {paymentPeriod === 'Mensal' ? (
-                    <View>
+                {paymentPeriod === 'CLT' ? (
+                    <View style={styles.inputRow}>
                         <InputStyle
-                            onChangeText={setPaymentDay}
-                            value={paymentDay}
+                            value={paymentDayInput}
+                            onChangeText={setPaymentDayInput}
                             title={'Dia do Pagamento'}
-
+                            width="48%"
+                        />
+                        <InputStyle
+                            value={advancePaymentDayInput}
+                            onChangeText={setAdvancePaymentDayInput}
+                            title={'Dia do Vale'}
+                            width="48%"
                         />
                     </View>
                 ) : (
-                    <View>
-                        <InputStyle
-                            onChangeText={setPaymentDay}
-                            value={paymentDay}
-                            title={'Dia do Pagamento'}
-                        />
-                        <InputStyle
-                            onChangeText={setPaymentDayVale}
-                            value={paymentDayVale}
-                            title={'Dia do Vale'}
-                        />
-                    </View>
+                    <InputStyle
+                        value={paymentDayInput}
+                        onChangeText={setPaymentDayInput}
+                        title={'Dia do Pagamento'}
+                    />
                 )}
 
                 <View>
@@ -86,28 +137,32 @@ export default function WalletScreen({ navigation }) {
             </View>
 
             <View>
-                <View style={styles.ballanceContainer}>
+                <View style={styles.balanceContainer}>
                     <RText style={styles.text}>
                         Saldo da carteira
                     </RText>
-                    <RText style={[styles.text, {
-                        color:
-                            walletBalance >= 100 ? COLOR.Jade
-                                : walletBalance >= 1 ? COLOR.Gold1
-                                    : COLOR.Red,
-                    }]}>
+                    <RText
+                        style={[
+                            styles.text,
+                            { color: walletBalance >= 100 ? COLOR.Jade : walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red }
+                        ]}
+                    >
                         R$ {walletBalance.toFixed(2)}
                     </RText>
                 </View>
 
-                <JadeButton title={'Salvar'} onPress={handleUpdateWallet} />
+                <JadeButton title={'Salvar'} onPress={handleSave} />
             </View>
         </ScreenWrapper>
     );
-};
+}
 
 const styles = {
-    ballanceContainer: {
+    inputRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    balanceContainer: {
         backgroundColor: COLOR.White,
         padding: 10,
         borderWidth: 1,

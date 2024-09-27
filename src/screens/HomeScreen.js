@@ -100,7 +100,7 @@ export default function HomeScreen({ navigation }) {
             </View>
 
             <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
-
+            
             <View style={styles.dropdownContainer}>
                 <Dropdown
                     selectedValue={selectedMonth}
@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation }) {
                                             </RText>
 
                                             <View style={styles.statusContainer}>
-                                                <RText>{expense.payment || expense.status}</RText>
+                                                <RText style={{ fontSize: 16 }}>{expense.payment || expense.status}</RText>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -236,9 +236,9 @@ const styles = {
         backgroundColor: COLOR.Grey,
         width: 80,
         height: 30,
+        borderRadius: 5,
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 5,
     },
     footer: {
         flexDirection: 'row',

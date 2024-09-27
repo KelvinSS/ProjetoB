@@ -22,7 +22,7 @@ export const status = [
 
 export const paymentPeriod = [
     { label: 'Mensal', value: 'Mensal' },
-    { label: 'Pagamento e Vale', value: 'CLT' },
+    { label: 'Pagamento e Adiantamento', value: 'CLT' },
 ];
 
 export const walletBalance = [

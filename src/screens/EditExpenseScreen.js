@@ -13,7 +13,7 @@ import { ptBR } from 'date-fns/locale';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
-    const { expenses, updateExpense, deleteExpense } = useContext(ExpenseContext);
+    const { expenses, updateExpense, deleteExpense, updateWalletBalance, walletBalance } = useContext(ExpenseContext);
 
     const expenseToEdit = expenses.find(expense => expense.id === id);
 
@@ -46,7 +46,14 @@ const EditExpenseScreen = ({ route, navigation }) => {
         if (!newDescription || !newAmount) {
             Alert.alert('Descrição e valor são obrigatórios');
             return;
-        }
+        };
+
+        const oldAmount = expenseToEdit.amount;
+        const amountDifference = numericValue - oldAmount;
+
+        if (newIsRecurring === 'Diário') {
+            updateWalletBalance(walletBalance - amountDifference);
+        };
 
         updateExpense({
             id,
