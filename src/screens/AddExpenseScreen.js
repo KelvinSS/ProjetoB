@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Alert, View } from 'react-native';
+import { StyleSheet, Alert, View, ScrollView } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from '../theme/Theme';
 import { format, parse, isValid, addMonths, setDate } from 'date-fns';
@@ -7,6 +7,7 @@ import { ptBR } from 'date-fns/locale';
 import uuid from 'react-native-uuid';
 import RText from '../components/RText';
 import Dropdown from '../components/Dropdown';
+import DateInput from '../components/DateInput';
 import InputReal from '../components/MoneyInput';
 import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
@@ -99,7 +100,7 @@ export default function AddExpenseScreen({ navigation }) {
 
     return (
         <ScreenWrapper>
-            <View>
+            <ScrollView>
                 <Dropdown
                     selectedValue={isRecurring}
                     onValueChange={setIsRecurring}
@@ -118,7 +119,7 @@ export default function AddExpenseScreen({ navigation }) {
                         />
 
                         <View>
-                            <InputStyle
+                            <DateInput
                                 value={editDate}
                                 onChangeText={setEditDate}
                                 title={'Data'}
@@ -146,7 +147,7 @@ export default function AddExpenseScreen({ navigation }) {
                     <>
                         {/* Diario */}
                         <View>
-                            <InputStyle
+                            <DateInput
                                 value={editDate}
                                 onChangeText={setEditDate}
                                 title={'Data'}
@@ -174,7 +175,7 @@ export default function AddExpenseScreen({ navigation }) {
                         </View>
                     </>
                 ) : ''}
-            </View>
+            </ScrollView>
 
             <JadeButton title={'Adicionar Gasto'} onPress={handleAddExpense} />
         </ScreenWrapper>

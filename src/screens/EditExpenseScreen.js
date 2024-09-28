@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, Alert } from 'react-native';
+import { View, Text, Alert, ScrollView } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from '../theme/Theme';
 import Dropdown from '../components/Dropdown';
@@ -10,6 +10,8 @@ import ScreenWrapper from '../components/ScreenWrapper';
 
 import { format, parse, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { formatCurrency } from '../utils/formatCurrency';
+import DateInput from '../components/DateInput';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -23,7 +25,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     const [newEditDate, setNewEditDate] = useState(expenseToEdit.date || '');
     const [newDescription, setNewDescription] = useState(expenseToEdit.description || '');
-    const [newAmount, setNewAmount] = useState(expenseToEdit.amount ? expenseToEdit.amount.toString() : '');
+    const [newAmount, setNewAmount] = useState(expenseToEdit.amount ? formatCurrency(expenseToEdit.amount.toString()) : '');
     const [newLocation, setNewLocation] = useState(expenseToEdit.location || '');
     const [newPayment, setNewPayment] = useState(expenseToEdit.payment || '');
     const [newIsRecurring, setNewIsRecurring] = useState(expenseToEdit.isRecurring || '');
@@ -95,9 +97,52 @@ const EditExpenseScreen = ({ route, navigation }) => {
 
     return (
         <ScreenWrapper>
-            {newIsRecurring ? (<>
-                {/* recorrente */}
-                <View>
+            <ScrollView>
+                {newIsRecurring ? (<>
+                    {/* recorrente */}
+                    <View>
+                        <View>
+                            <Dropdown
+                                selectedValue={newPayment}
+                                onValueChange={setNewPayment}
+                                title={'Forma de pagamento'}
+                                type={'paymentType'}
+                            />
+                            <Dropdown
+                                selectedValue={newRecurrenceInterval}
+                                onValueChange={setNewRecurrenceInterval}
+                                title={'Intervalo de Recorrência'}
+                                type={'recurrenceInterval'}
+                            />
+                        </View>
+
+                        <View>
+                            <DateInput
+                                value={newEditDate}
+                                onChangeText={setNewEditDate}
+                                title={'Data'}
+                            />
+                            <InputStyle
+                                value={newDescription}
+                                onChangeText={setNewDescription}
+                                title={'Descrição'}
+                            />
+                            <InputReal
+                                value={newAmount}
+                                onChangeText={setNewAmount}
+                                title={'Valor'}
+                            />
+                        </View>
+
+                        <Dropdown
+                            selectedValue={newStatus}
+                            onValueChange={setNewStatus}
+                            title={'Status'}
+                            type={'status'}
+                        />
+                    </View>
+                </>) : (<>
+                    {/* Diário */}
                     <View>
                         <Dropdown
                             selectedValue={newPayment}
@@ -105,16 +150,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
                             title={'Forma de pagamento'}
                             type={'paymentType'}
                         />
-                        <Dropdown
-                            selectedValue={newRecurrenceInterval}
-                            onValueChange={setNewRecurrenceInterval}
-                            title={'Intervalo de Recorrência'}
-                            type={'recurrenceInterval'}
-                        />
-                    </View>
-
-                    <View>
-                        <InputStyle
+                        <DateInput
                             value={newEditDate}
                             onChangeText={setNewEditDate}
                             title={'Data'}
@@ -129,48 +165,14 @@ const EditExpenseScreen = ({ route, navigation }) => {
                             onChangeText={setNewAmount}
                             title={'Valor'}
                         />
+                        <InputStyle
+                            value={newLocation}
+                            onChangeText={setNewLocation}
+                            title={'Local'}
+                        />
                     </View>
-
-                    <Dropdown
-                        selectedValue={newStatus}
-                        onValueChange={setNewStatus}
-                        title={'Status'}
-                        type={'status'}
-                    />
-                </View>
-            </>) : (<>
-                {/* Nao recorrente */}
-                <View>
-                    <Dropdown
-                        selectedValue={newPayment}
-                        onValueChange={setNewPayment}
-                        title={'Forma de pagamento'}
-                        type={'paymentType'}
-                    />
-
-
-                    <InputStyle
-                        value={newEditDate}
-                        onChangeText={setNewEditDate}
-                        title={'Data'}
-                    />
-                    <InputStyle
-                        value={newDescription}
-                        onChangeText={setNewDescription}
-                        title={'Descrição'}
-                    />
-                    <InputReal
-                        value={newAmount}
-                        onChangeText={setNewAmount}
-                        title={'Valor'}
-                    />
-                    <InputStyle
-                        value={newLocation}
-                        onChangeText={setNewLocation}
-                        title={'Local'}
-                    />
-                </View>
-            </>)}
+                </>)}
+            </ScrollView>
 
             <View>
                 <JadeButton title={"Salvar"} onPress={handleSave} />
@@ -180,6 +182,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
                     title={"Deletar"}
                 />
             </View>
+
         </ScreenWrapper>
     );
 };

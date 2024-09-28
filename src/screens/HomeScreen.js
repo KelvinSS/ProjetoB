@@ -5,12 +5,13 @@ import { ExpenseContext } from '../context/ExpenseContext';
 import { AuthContext } from '../context/authContext';
 import { useDateUtils } from '../hooks/useDateUtils';
 import { COLOR, FONTE } from '../theme/Theme';
+import { formatCurrency } from '../utils/formatCurrency';
 import RText from '../components/RText';
+import Dropdown from '../components/Dropdown';
 import JadeButton from '../components/JadeButton';
 import ButtonMenu from '../components/ButtonMenu';
-import ScreenWrapper from '../components/ScreenWrapper';
 import ZenithName from '../components/ZenithName';
-import Dropdown from '../components/Dropdown';
+import ScreenWrapper from '../components/ScreenWrapper';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -99,8 +100,8 @@ export default function HomeScreen({ navigation }) {
                 <ButtonMenu onPress={() => navigation.navigate('PlanningScreen')} title={'Planejamento'} disabled style={{ marginLeft: 5 }} />
             </View>
 
-            <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} />
-            
+            <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} icon />
+
             <View style={styles.dropdownContainer}>
                 <Dropdown
                     selectedValue={selectedMonth}
@@ -141,7 +142,7 @@ export default function HomeScreen({ navigation }) {
                                             }
                                         ]}>
                                             <RText>
-                                                {expense.description} - R$ {expense.amount.toFixed(2)}
+                                                {expense.description} - {formatCurrency(expense.amount)}
                                                 {`\n`}
                                                 {expense.location}
                                             </RText>
@@ -161,7 +162,7 @@ export default function HomeScreen({ navigation }) {
             <View style={styles.footer}>
                 <View style={styles.totalContainer}>
                     <RText style={styles.totalText}>Total Gasto</RText>
-                    <RText style={styles.totalAmount}>R$ {totalAmount.toFixed(2)}</RText>
+                    <RText style={styles.totalAmount}>{formatCurrency(totalAmount)}</RText>
                 </View>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('WalletScreen')}
@@ -175,8 +176,9 @@ export default function HomeScreen({ navigation }) {
                                 walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red
                         }
                     ]}>
-                        R$ {walletBalance.toFixed(2)}
+                        {formatCurrency(walletBalance)}
                     </RText>
+
                 </TouchableOpacity>
             </View>
         </ScreenWrapper>
@@ -251,13 +253,13 @@ const styles = {
         borderWidth: 1,
         borderColor: COLOR.Black,
         borderRadius: 10,
-        width: 150,
+        width: 158,
     },
     totalText: {
         fontSize: 20,
     },
     totalAmount: {
-        fontSize: 20,
+        fontSize: 19,
         fontWeight: 'bold',
     },
     walletContainer: {
@@ -266,13 +268,13 @@ const styles = {
         borderWidth: 1,
         borderRadius: 10,
         borderColor: COLOR.Black,
-        width: 150,
+        width: 158,
     },
     walletText: {
         fontSize: 20,
     },
     walletAmount: {
-        fontSize: 20,
+        fontSize: 19,
         fontWeight: 'bold',
     },
     dropdownContainer: {
