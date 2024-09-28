@@ -24,7 +24,7 @@ import { COLOR } from './src/theme/Theme';
 
 const Stack = createStackNavigator();
 
-function AppNavigator() {
+function AppNavigator({ navigation }) {
   const { isLoggedIn } = useContext(AuthContext);
 
   return (
@@ -61,7 +61,10 @@ function AppContent() {
 
     const subscription = Notifications.addNotificationResponseReceivedListener(response => {
       const { notification } = response;
-      if (notification.request.content.data.screen === 'CreditExpenses') {
+      const screen = notification.request.content.data.screen;
+
+      // Verifica se a notificação contém a tela que queremos navegar
+      if (screen === 'CreditExpenses') {
         navigation.navigate('CreditExpenses');
       }
     });
