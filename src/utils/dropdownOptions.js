@@ -10,9 +10,7 @@ export const recurrent = [
 ];
 
 export const recurrenceInterval = [
-    { label: 'Semanal', value: 'Semanal' },
     { label: 'Mensal', value: 'Mensal' },
-    { label: 'Anual', value: 'Anual' },
 ];
 
 export const status = [
