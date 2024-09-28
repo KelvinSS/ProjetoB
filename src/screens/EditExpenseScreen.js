@@ -12,6 +12,7 @@ import { format, parse, isValid } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { formatCurrency } from '../utils/formatCurrency';
 import DateInput from '../components/DateInput';
+import RText from '../components/RText';
 
 const EditExpenseScreen = ({ route, navigation }) => {
     const { id } = route.params;
@@ -98,7 +99,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
     return (
         <ScreenWrapper>
             <ScrollView>
-                {newIsRecurring ? (<>
+                {newIsRecurring === 'Recorrente' ? (<>
                     {/* recorrente */}
                     <View>
                         <View>
@@ -141,7 +142,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
                             type={'status'}
                         />
                     </View>
-                </>) : (<>
+                </>) : newIsRecurring === 'Diário' ? (<>
                     {/* Diário */}
                     <View>
                         <Dropdown
@@ -171,7 +172,7 @@ const EditExpenseScreen = ({ route, navigation }) => {
                             title={'Local'}
                         />
                     </View>
-                </>)}
+                </>) : ''}
             </ScrollView>
 
             <View>
