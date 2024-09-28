@@ -8,6 +8,8 @@ import InputStyle from "../components/FormInput";
 import MoneyInput from "../components/MoneyInput";
 import JadeButton from "../components/JadeButton";
 import ScreenWrapper from "../components/ScreenWrapper";
+import PushNotification from "react-native-push-notification";
+import { formatCurrency } from "../utils/formatCurrency";
 
 export default function WalletScreen({ navigation }) {
     const {
@@ -39,6 +41,20 @@ export default function WalletScreen({ navigation }) {
     const handleSave = () => {
         let updatedFields = [];
 
+        // Valida se os dias de pagamento e do vale estão entre 1 e 31
+        const paymentDayNumber = parseInt(paymentDayInput, 10);
+        const advancePaymentDayNumber = advancePaymentDayInput ? parseInt(advancePaymentDayInput, 10) : null;
+
+        if (paymentDayNumber < 1 || paymentDayNumber > 31) {
+            Alert.alert('Erro', 'O dia de pagamento deve estar entre 1 e 31.');
+            return;
+        }
+
+        if (advancePaymentDayNumber !== null && (advancePaymentDayNumber < 1 || advancePaymentDayNumber > 31)) {
+            Alert.alert('Erro', 'O dia do vale deve estar entre 1 e 31.');
+            return;
+        }
+
         // Verifica e atualiza o saldo
         if (saldo) {
             const numericValue = parseFloat(saldo.replace(/[^\d,]/g, '').replace(',', '.'));
@@ -59,19 +75,19 @@ export default function WalletScreen({ navigation }) {
 
             if (updatedBalance !== initialWalletBalance) {
                 updateWalletBalance(updatedBalance);
-                updatedFields.push(`saldo da carteira foi ${operation === 'add' ? 'adicionado' : 'removido'} R$ ${numericValue.toFixed(2)}`);
+                updatedFields.push(`Saldo da carteira foi ${operation === 'add' ? 'adicionado' : 'removido'} ${formatCurrency(numericValue)}`);
             }
         }
 
         // Verifica e atualiza o dia de pagamento
-        if (parseInt(paymentDayInput, 10) !== initialPaymentDay) {
-            updatePaymentDay(parseInt(paymentDayInput, 10));
+        if (paymentDayNumber !== initialPaymentDay) {
+            updatePaymentDay(paymentDayNumber);
             updatedFields.push('Dia do pagamento atualizado');
         }
 
         // Verifica e atualiza o dia do vale
-        if (advancePaymentDayInput && parseInt(advancePaymentDayInput, 10) !== initialAdvancePaymentDay) {
-            updateAdvancePaymentDay(parseInt(advancePaymentDayInput, 10));
+        if (advancePaymentDayNumber !== null && advancePaymentDayNumber !== initialAdvancePaymentDay) {
+            updateAdvancePaymentDay(advancePaymentDayNumber);
             updatedFields.push('Dia do vale atualizado');
         }
 
@@ -82,12 +98,32 @@ export default function WalletScreen({ navigation }) {
 
         // Mostra o alerta com as alterações
         if (updatedFields.length > 0) {
-            Alert.alert('Atualizações', `As seguintes alterações foram feitas: ${updatedFields.join(', ')}.`);
+            Alert.alert('Atualizações', `As seguintes alterações foram feitas: ${'\n\n' + updatedFields.join('\n')}.`);
         } else {
             Alert.alert('Nenhuma alteração', 'Ué, tu nem mudou nada doido!');
         }
 
         navigation.goBack();
+    };
+
+    const schedulePaymentNotification = (paymentDay) => {
+        const now = new Date()
+        const currentMonth = now.getMonth();
+        const year = now.getFullYear()
+
+        let paymentDate = new Date(year, currentMonth, paymentDay)
+
+        if (paymentDate <= now) {
+            paymentDate = new Date(year, currentMonth + 1, paymentDate)
+        }
+
+        PushNotification.localNotificationSchedule({
+            message: 'Recebeu hoje ne? Que tal adicionar isso ao nosso app!',
+            date: paymentDate,
+            allowWhileIdle: true,
+        })
+
+        Alert.alert('Notificação agendada', `Notificação para o dia ${paymentDay} foi agendada.`);
     };
 
     return (
@@ -107,12 +143,14 @@ export default function WalletScreen({ navigation }) {
                             onChangeText={setPaymentDayInput}
                             title={'Dia do Pagamento'}
                             width="48%"
+                            keyboardType={'numeric'}
                         />
                         <InputStyle
                             value={advancePaymentDayInput}
                             onChangeText={setAdvancePaymentDayInput}
                             title={'Dia do Vale'}
                             width="48%"
+                            keyboardType={'numeric'}
                         />
                     </View>
                 ) : (
@@ -147,7 +185,7 @@ export default function WalletScreen({ navigation }) {
                             { color: walletBalance >= 100 ? COLOR.Jade : walletBalance >= 1 ? COLOR.Gold1 : COLOR.Red }
                         ]}
                     >
-                        R$ {walletBalance.toFixed(2)}
+                        {formatCurrency(walletBalance)}
                     </RText>
                 </View>
 
