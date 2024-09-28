@@ -62,6 +62,10 @@ export const ExpenseProvider = ({ children }) => {
                 setWalletBalance(prevBalance => prevBalance - expense.amount);
             };
 
+            if (expense.isRecurring === 'Recorrente' && expense.status === 'Pago') {
+                setWalletBalance(prevBalance => prevBalance - expense.amount);
+            };
+
             return updatedExpenses;
         });
     };
@@ -79,7 +83,19 @@ export const ExpenseProvider = ({ children }) => {
     };
 
     const updateExpense = (updatedExpense) => {
-        setExpenses(expenses.map(expense => (expense.id === updatedExpense.id ? updatedExpense : expense)));
+        setExpenses(currentExpenses => {
+            const existingExpense = currentExpenses.find(expense => expense.id === updatedExpense.id);
+
+            if (existingExpense && existingExpense.status !== updatedExpense.status) {
+                if (updatedExpense.status === 'Pago') {
+                    setWalletBalance(currentBalance => currentBalance - updatedExpense.amount);
+                } else if (existingExpense.status === 'Pago') {
+                    setWalletBalance(currentBalance => currentBalance + existingExpense.amount);
+                }
+            }
+
+            return currentExpenses.map(expense => (expense.id === updatedExpense.id ? updatedExpense : expense));
+        });
     };
 
     const updateWalletBalance = (newBalance) => {
