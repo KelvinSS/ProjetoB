@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import MaskInput, { Masks } from 'react-native-mask-input';
-import { COLOR } from '../theme/Theme';
 import RText from './RText';
+import { COLOR } from '../theme/Theme';
 
 const MoneyInput = ({ value, onChangeText, style, title, titleRequired }) => {
+    const [isFocused, setFocused] = useState(false);
+
+    const handleFocus = () => {
+        setFocused(true);
+    };
+
+    const handleBlur = () => {
+        if (!value) {
+            setFocused(false);
+        }
+    };
+
+    const borderColor = isFocused || value ? COLOR.Jade : COLOR.Grey;
+
     return (
         <View>
             {title && (
@@ -17,8 +31,10 @@ const MoneyInput = ({ value, onChangeText, style, title, titleRequired }) => {
                 value={value}
                 onChangeText={onChangeText}
                 mask={Masks.BRL_CURRENCY}
-                style={[styles.input, style]}
+                style={[styles.input, style, { borderColor }]}
                 keyboardType="numeric"
+                onFocus={handleFocus}
+                onBlur={handleBlur}
             />
         </View>
     );
@@ -27,7 +43,6 @@ const MoneyInput = ({ value, onChangeText, style, title, titleRequired }) => {
 const styles = StyleSheet.create({
     input: {
         height: 40,
-        borderColor: COLOR.Jade,
         borderWidth: 1,
         paddingHorizontal: 8,
         borderRadius: 4,
