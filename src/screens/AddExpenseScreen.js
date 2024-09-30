@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { StyleSheet, Alert, View, ScrollView } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
 import { COLOR } from '../theme/Theme';
-import { format, parse, isValid, addMonths, setDate } from 'date-fns';
+import { format, parse, isValid, addMonths, addWeeks, setDate } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import uuid from 'react-native-uuid';
 import RText from '../components/RText';
@@ -59,40 +59,68 @@ export default function AddExpenseScreen({ navigation }) {
             addExpense(newExpense);
             navigation.goBack();
 
-        }
-        else if (isRecurring === 'Recorrente') {
-            let currentMonthDate = parsedDate;
-            const endOfYear = new Date(format(parsedDate, 'yyyy'), 11, 31);
+        } else if (isRecurring === 'Recorrente') {
+            let currentDate = parsedDate;
 
-            const selectedDay = parseInt(format(parsedDate, 'd'));
-            const expensesToAdd = [];
+            // Verifica o tipo de intervalo de recorrência
+            if (recurrenceInterval === 'Mensal') {
+                const endOfYear = new Date(format(parsedDate, 'yyyy'), 11, 31);
+                const selectedDay = parseInt(format(parsedDate, 'd'));
+                const expensesToAdd = [];
 
-            while (currentMonthDate <= endOfYear) {
-                const formattedMonthName = format(currentMonthDate, 'MMMM', { locale: ptBR }).charAt(0).toUpperCase() + format(currentMonthDate, 'MMMM', { locale: ptBR }).slice(1);
-                const newYear = format(currentMonthDate, 'yyyy');
+                while (currentDate <= endOfYear) {
+                    const formattedMonthName = format(currentDate, 'MMMM', { locale: ptBR }).charAt(0).toUpperCase() + format(currentDate, 'MMMM', { locale: ptBR }).slice(1);
+                    const newYear = format(currentDate, 'yyyy');
 
-                const lastDayOfMonth = new Date(currentMonthDate.getFullYear(), currentMonthDate.getMonth() + 1, 0).getDate();
-                const adjustedDay = selectedDay > lastDayOfMonth ? lastDayOfMonth : selectedDay;
+                    const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+                    const adjustedDay = selectedDay > lastDayOfMonth ? lastDayOfMonth : selectedDay;
 
-                currentMonthDate = setDate(currentMonthDate, adjustedDay);
+                    currentDate = setDate(currentDate, adjustedDay);
 
-                const newExpense = {
-                    isRecurring,
-                    id: uuid.v4(),
-                    description,
-                    amount: parseFloat(numericValue),
-                    date: format(currentMonthDate, 'dd/MM/yyyy'),
-                    location: location,
-                    recurrenceInterval: recurrenceInterval,
-                    status: status,
-                    category: formattedMonthName + newYear,
-                };
+                    const newExpense = {
+                        isRecurring,
+                        id: uuid.v4(),
+                        description,
+                        amount: parseFloat(numericValue),
+                        date: format(currentDate, 'dd/MM/yyyy'),
+                        location: location,
+                        recurrenceInterval: recurrenceInterval,
+                        status: status,
+                        category: formattedMonthName + newYear,
+                    };
 
-                expensesToAdd.push(newExpense);
-                currentMonthDate = addMonths(currentMonthDate, 1);
+                    expensesToAdd.push(newExpense);
+                    currentDate = addMonths(currentDate, 1); // Adiciona 1 mês
+                }
+
+                expensesToAdd.forEach(expense => addExpense(expense));
+
+            } else if (recurrenceInterval === 'Semanal') {
+                const endOfYear = new Date(format(parsedDate, 'yyyy'), 11, 31);
+                const expensesToAdd = [];
+
+                while (currentDate <= endOfYear) {
+                    const formattedMonthName = format(currentDate, 'MMMM', { locale: ptBR }).charAt(0).toUpperCase() + format(currentDate, 'MMMM', { locale: ptBR }).slice(1);
+                    const newYear = format(currentDate, 'yyyy');
+
+                    const newExpense = {
+                        isRecurring,
+                        id: uuid.v4(),
+                        description,
+                        amount: parseFloat(numericValue),
+                        date: format(currentDate, 'dd/MM/yyyy'),
+                        location: location,
+                        recurrenceInterval: recurrenceInterval,
+                        status: status,
+                        category: `${formattedMonthName}${newYear}`, // Ajustando aqui
+                    };
+
+                    expensesToAdd.push(newExpense);
+                    currentDate = addWeeks(currentDate, 1); // Adiciona 1 semana
+                }
+
+                expensesToAdd.forEach(expense => addExpense(expense));
             }
-
-            expensesToAdd.forEach(expense => addExpense(expense));
 
             navigation.goBack();
         };
