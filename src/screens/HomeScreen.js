@@ -141,6 +141,11 @@ export default function HomeScreen({ navigation }) {
                                                             COLOR.Grey
                                             }
                                         ]}>
+                                            <View style={styles.recurrenceInterval}>
+                                                {expense.recurrenceInterval && (
+                                                    <RText style={{ fontSize: 16 }}>{expense.recurrenceInterval}</RText>
+                                                )}
+                                            </View>
                                             <RText>
                                                 {expense.description} - {formatCurrency(expense.amount)}
                                                 {`\n`}
@@ -281,5 +286,13 @@ const styles = {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginTop: 10,
-    }
+    },
+    recurrenceInterval: {
+        backgroundColor: COLOR.Background,
+        position: 'absolute',
+        top: -10,
+        left: 15,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
 };
