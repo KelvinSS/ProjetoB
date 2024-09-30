@@ -11,11 +11,13 @@ export const recurrent = [
 
 export const recurrenceInterval = [
     { label: 'Mensal', value: 'Mensal' },
+    { label: 'Semanal', value: 'Semanal' },
 ];
 
 export const status = [
     { label: 'Aguardando Pagamento', value: 'Aguardando' },
     { label: 'Pago', value: 'Pago' },
+    { label: 'Atrasado', value: 'Atrasado' },
 ];
 
 export const paymentPeriod = [
@@ -43,8 +45,17 @@ export const months = [
     { label: 'Dezembro', value: 'Dezembro' },
 ];
 
-export const years = [
-    { label: '2023', value: '2023' },
-    { label: '2024', value: '2024' },
-    { label: '2025', value: '2025' },
-];
+export const generateYears = (startYear, extraYears = 1) => {
+    const currentYear = new Date().getFullYear();
+    const finalYear = currentYear + extraYears;
+
+    let years = [];
+
+    for (let year = startYear; year <= finalYear; year++) {
+        years.push({ label: year.toString(), value: year.toString() });
+    }
+
+    return years;
+};
+
+export const years = generateYears(2024);
