@@ -1,5 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format, parse } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export const ExpenseContext = createContext();
 
@@ -7,7 +9,7 @@ export const ExpenseProvider = ({ children }) => {
     const [expenses, setExpenses] = useState([]);
     const [walletBalance, setWalletBalance] = useState(0);
     const [paymentDay, setPaymentDay] = useState(1);
-    const [advancePaymentDay, setAdvancePaymentDay] = useState(null); // Novo estado para o dia de adiantamento
+    const [advancePaymentDay, setAdvancePaymentDay] = useState(null);
 
     useEffect(() => {
         const loadExpensesAndBalance = async () => {
@@ -17,9 +19,12 @@ export const ExpenseProvider = ({ children }) => {
                 const savedPaymentDay = await AsyncStorage.getItem('paymentDay');
                 const savedAdvancePaymentDay = await AsyncStorage.getItem('advancePaymentDay');
 
-                if (savedExpenses !== null) {
-                    setExpenses(JSON.parse(savedExpenses));
-                }
+                let parsedExpenses = savedExpenses ? JSON.parse(savedExpenses) : [];
+                
+                // Atualiza as categorias dos gastos antigos
+                parsedExpenses = updateOldExpensesCategories(parsedExpenses);
+
+                setExpenses(parsedExpenses);
                 if (savedBalance !== null) {
                     setWalletBalance(parseFloat(savedBalance));
                 }
@@ -54,17 +59,34 @@ export const ExpenseProvider = ({ children }) => {
         saveExpensesAndBalance();
     }, [expenses, walletBalance, paymentDay, advancePaymentDay]);
 
+    // Função para recategorizar os gastos antigos
+    const updateOldExpensesCategories = (oldExpenses) => {
+        return oldExpenses.map(expense => {
+            // Verifica se a categoria está no formato correto
+            if (!expense.category || !/^[A-Za-z]+[0-9]{4}$/.test(expense.category)) {
+                const expenseDate = parse(expense.date, 'dd/MM/yyyy', new Date());
+                const newMonthName = format(expenseDate, 'MMMM', { locale: ptBR });
+                const formattedMonthName = newMonthName.charAt(0).toUpperCase() + newMonthName.slice(1);
+                const newYear = format(expenseDate, 'yyyy');
+
+                // Atualiza a categoria no formato 'MêsAno'
+                expense.category = formattedMonthName + newYear;
+            }
+            return expense;
+        });
+    };
+
     const addExpense = (expense) => {
         setExpenses((prevExpenses) => {
             const updatedExpenses = [...prevExpenses, expense];
 
             if (expense.isRecurring === 'Diário') {
                 setWalletBalance(prevBalance => prevBalance - expense.amount);
-            };
+            }
 
             if (expense.isRecurring === 'Recorrente' && expense.status === 'Pago') {
                 setWalletBalance(prevBalance => prevBalance - expense.amount);
-            };
+            }
 
             return updatedExpenses;
         });
@@ -78,8 +100,8 @@ export const ExpenseProvider = ({ children }) => {
 
             if (expenseToDelete.isRecurring === 'Diário') {
                 setWalletBalance(prevBalance => prevBalance + expenseToDelete.amount);
-            };
-        };
+            }
+        }
     };
 
     const updateExpense = (updatedExpense) => {
