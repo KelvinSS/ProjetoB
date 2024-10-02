@@ -15,10 +15,12 @@ import PlanningScreen from './src/screens/PlanningScreen';
 import AddRecurringExpenseScreen from './src/screens/AddRecurringExpenseScreen';
 import EditPlanningScreen from './src/screens/EditPlanningScreen';
 import WalletScreen from './src/screens/WalletScreen';
+import AboutScreen from './src/screens/AboutScreen';
 
 import { AuthProvider, AuthContext } from './src/context/authContext';
 import { PlanningProvider } from './src/context/PlanningContext';
 import { ExpenseProvider } from './src/context/ExpenseContext';
+import BackupManager from './src/utils/BackupManager';
 
 import { COLOR } from './src/theme/Theme';
 
@@ -44,6 +46,7 @@ function AppNavigator({ navigation }) {
       <Stack.Screen name="AddRecurringExpense" component={AddRecurringExpenseScreen} options={{ title: 'Gasto recorrente' }} />
       <Stack.Screen name="EditPlanningScreen" component={EditPlanningScreen} options={{ title: 'Editar Gasto recorrente' }} />
       <Stack.Screen name="WalletScreen" component={WalletScreen} options={{ title: 'Carteira' }} />
+      <Stack.Screen name="AboutScreen" component={AboutScreen} options={{ title: 'Sobre o Zenith' }} />
     </Stack.Navigator>
   );
 }
@@ -79,6 +82,7 @@ function AppContent() {
           <NavigationContainer>
             <StatusBar barStyle={'light-content'} backgroundColor={COLOR.Jade} />
             <AppNavigator />
+            <BackupManager />
           </NavigationContainer>
         </PlanningProvider>
       </ExpenseProvider>
