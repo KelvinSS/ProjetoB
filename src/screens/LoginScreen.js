@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Alert } from 'react-native';
+import { View, Alert, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../context/authContext';
 import InputStyle from '../components/FormInput';
 import JadeButton from '../components/JadeButton';
 import ZenithName from '../components/ZenithName';
-import ScreenWrapper from '../components/ScreenWrapper';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { COLOR } from '../theme/Theme';
 
 const LoginScreen = ({ navigation }) => {
     const [inputUsername, setInputUsername] = useState('');
@@ -36,13 +37,11 @@ const LoginScreen = ({ navigation }) => {
     };
 
     return (
-        <ScreenWrapper>
-
-            <View></View>
-
-            <ZenithName />
-
-            <View>
+        <SafeAreaView style={styles.container}>
+            <View style={styles.header}>
+                <ZenithName />
+            </View>
+            <View style={styles.formContainer}>
                 <InputStyle
                     value={inputUsername}
                     onChangeText={setInputUsername}
@@ -54,13 +53,47 @@ const LoginScreen = ({ navigation }) => {
                     placeholder={'Senha'}
                     secureTextEntry={true}
                 />
-                <JadeButton title={'Login'} onPress={handleLogin} style={{ marginBottom: 10 }} />
-                <JadeButton title={'Login com biometria'} onPress={handleBiometricAuth} />
-            </View>
+                <JadeButton title={'Login'} onPress={handleLogin} style={styles.button} />
 
-            <View></View>
-        </ScreenWrapper>
+                <View style={styles.biometricButtonContainer}>
+                    <TouchableOpacity style={styles.biometricButton} onPress={handleBiometricAuth}>
+                        <View>
+                            <Icon name="fingerprint" size={40} color={COLOR.White} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 20,
+    },
+    header: {
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    formContainer: {
+        // 
+    },
+    button: {
+        marginBottom: 10,
+    },
+    biometricButtonContainer: {
+        alignItems: 'center',
+    },
+    biometricButton: {
+        padding: 10,
+        borderRadius: 50,
+        backgroundColor: COLOR.Jade,
+        alignItems: 'center',
+        justifyContent: 'c1enter',
+        width: 70,
+    },
+});
 
 export default LoginScreen;
