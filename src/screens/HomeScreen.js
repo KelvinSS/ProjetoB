@@ -146,10 +146,9 @@ export default function HomeScreen({ navigation }) {
                                                     <RText style={{ fontSize: 16 }}>{expense.recurrenceInterval}</RText>
                                                 )}
                                             </View>
-                                            <RText>
+                                            <RText style={{ fontSize: 16 }}>
                                                 {expense.description} - {formatCurrency(expense.amount)}
-                                                {`\n`}
-                                                {expense.location}
+                                                {expense.location ? `\n${expense.location}` : null}
                                             </RText>
 
                                             <View style={styles.statusContainer}>
