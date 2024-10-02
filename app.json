@@ -32,6 +32,14 @@
     },
     "plugins": [
       "expo-font"
-    ]
+    ],
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": true,
+      "url": "https://u.expo.dev/8ee62bc8-bf2d-44cf-b1e5-82bc2598fb59"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }
