@@ -5,8 +5,8 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@expo-google-fonts/montserrat": "^0.2.3",
@@ -15,11 +15,11 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "date-fns": "^4.0.0",
-    "expo": "~51.0.28",
-    "expo-dev-client": "~4.0.26",
+    "expo": "~51.0.36",
+    "expo-dev-client": "~4.0.27",
     "expo-font": "~12.0.10",
     "expo-local-authentication": "~14.0.1",
-    "expo-notifications": "~0.28.17",
+    "expo-notifications": "~0.28.18",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-native": "0.74.5",
@@ -34,7 +34,7 @@
     "react-native-uuid": "^2.0.2",
     "react-native-vector-icons": "^10.2.0",
     "uuid": "^10.0.0",
-    "expo-updates": "~0.25.25"
+    "expo-updates": "~0.25.26"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

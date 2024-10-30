@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, FlatList, Alert, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, FlatList, TouchableOpacity } from 'react-native';
 import { ExpenseContext } from '../context/ExpenseContext';
-import { AuthContext } from '../context/authContext';
 import { useDateUtils } from '../hooks/useDateUtils';
 import { COLOR, FONTE } from '../theme/Theme';
 import { formatCurrency } from '../utils/formatCurrency';
@@ -12,6 +10,7 @@ import JadeButton from '../components/JadeButton';
 import ButtonMenu from '../components/ButtonMenu';
 import ZenithName from '../components/ZenithName';
 import ScreenWrapper from '../components/ScreenWrapper';
+import HomeHeader from '../components/HomeHeader';
 
 const groupExpensesByDate = (expenses) => {
     return expenses.reduce((grouped, expense) => {
@@ -29,7 +28,6 @@ const calculateTotalAmount = (expenses) => {
 };
 
 export default function HomeScreen({ navigation }) {
-    const { logout } = useContext(AuthContext);
     const { expenses, walletBalance, getExpensesByCategory } = useContext(ExpenseContext);
 
     const { getCurrentMonth } = useDateUtils();
@@ -57,48 +55,26 @@ export default function HomeScreen({ navigation }) {
         });
     const totalAmount = calculateTotalAmount(groupedCategory);
 
-    const handleLogout = async () => {
-        Alert.alert(
-            'Sair',
-            'Deseja realmente sair?',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                {
-                    text: 'Sair',
-                    onPress: async () => {
-                        await logout();
-                        navigation.replace('Login');
-                    }
-                }
-            ]
-        );
-    };
-
     return (
         <ScreenWrapper>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={handleLogout} style={styles.headerButton}>
-                    <Icon
-                        name={'exit-outline'}
-                        size={24}
-                        color={COLOR.Jade}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Config')} style={styles.headerButton}>
-                    <Icon
-                        name={'construct-outline'}
-                        size={24}
-                        color={COLOR.Jade}
-                    />
-                </TouchableOpacity>
-            </View>
-
+            <HomeHeader navigation={navigation} />
             <ZenithName />
 
             <View style={styles.menuButtonsContainer}>
-                <ButtonMenu onPress={() => navigation.navigate('CreditExpenses')} title={'Ver Fatura'} disabled style={{ marginRight: 5 }} />
-                <ButtonMenu onPress={() => navigation.navigate('PlanningScreen')} title={'Planejamento'} disabled style={{ marginLeft: 5 }} />
+                <ButtonMenu
+                    onPress={() => navigation.navigate('CreditExpenses')}
+                    style={{ flex: 1, marginRight: 5 }}
+                    title={'Ver Fatura'}
+                    disabled
+                />
+                <ButtonMenu
+                    onPress={() => navigation.navigate('PlanningScreen')}
+                    style={{ flex: 1, marginLeft: 5 }}
+                    title={'Planejamento'}
+                    disabled
+                />
             </View>
+
 
             <JadeButton title={'Adicionar Gasto'} onPress={() => navigation.navigate('AddExpense')} icon />
 
@@ -138,7 +114,7 @@ export default function HomeScreen({ navigation }) {
                                                 borderColor:
                                                     expense.status === 'Pago' ? COLOR.Jade :
                                                         expense.status === 'Aguardando' ? COLOR.Gold1 :
-                                                            COLOR.Grey
+                                                            COLOR.Grey,
                                             }
                                         ]}>
                                             <View style={styles.recurrenceInterval}>
@@ -152,7 +128,7 @@ export default function HomeScreen({ navigation }) {
                                             </RText>
 
                                             <View style={styles.statusContainer}>
-                                                <RText style={{ fontSize: 16 }}>{expense.payment || expense.status}</RText>
+                                                <RText style={{ fontSize: 14,  }}>{expense.payment || expense.status}</RText>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -190,18 +166,6 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = {
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    headerButton: {
-        alignSelf: 'center',
-    },
-    headerText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: COLOR.Black,
-    },
     title: {
         fontSize: 40,
         marginBottom: 20,
@@ -212,6 +176,7 @@ const styles = {
     menuButtonsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 10,
     },
     expensesContainer: {
@@ -229,9 +194,9 @@ const styles = {
         marginBottom: 10,
     },
     expenseItem: {
-        height: 50,
+        height: 55,
         borderRadius: 5,
-        borderWidth: 1,
+        borderWidth: 2,
         padding: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',

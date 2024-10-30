@@ -1,7 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { COLOR } from '../theme/Theme';
 import RText from './RText';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 const ButtonMenu = ({ onPress, title, style, textStyle, disabled = false }) => {
     return (
@@ -20,7 +22,7 @@ const ButtonMenu = ({ onPress, title, style, textStyle, disabled = false }) => {
 const styles = StyleSheet.create({
     button: {
         backgroundColor: COLOR.White,
-        flex: 1,
+        width: screenWidth * 0.9,
         borderWidth: 1,
         borderRadius: 5,
         paddingVertical: 8,
@@ -35,6 +37,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         textTransform: 'uppercase',
+        textAlign: 'center',
     },
     disabledButton: {
         borderColor: COLOR.Black,

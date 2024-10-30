@@ -66,27 +66,18 @@ function AppContent() {
       const { notification } = response;
       const screen = notification.request.content.data.screen;
 
-      // Verifica se a notificação contém a tela que queremos navegar
-      if (screen === 'CreditExpenses') {
-        navigation.navigate('CreditExpenses');
+      if (screen) {
+        navigation.navigate(screen);
       }
     });
 
-    return () => subscription.remove();
+    return () => subscription.remove(); // Limpeza do listener
   }, []);
 
   return (
-    <AuthProvider>
-      <ExpenseProvider>
-        <PlanningProvider>
-          <NavigationContainer>
-            <StatusBar barStyle={'light-content'} backgroundColor={COLOR.Jade} />
-            <AppNavigator />
-            <BackupManager />
-          </NavigationContainer>
-        </PlanningProvider>
-      </ExpenseProvider>
-    </AuthProvider>
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
   );
 }
 
@@ -97,8 +88,17 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return null;
+    return null; // Enquanto as fontes carregam
   }
 
-  return <AppContent />;
+  return (
+    <AuthProvider>
+      <ExpenseProvider>
+        <PlanningProvider>
+          <StatusBar barStyle="light-content" backgroundColor={COLOR.Jade} />
+          <AppContent />
+        </PlanningProvider>
+      </ExpenseProvider>
+    </AuthProvider>
+  );
 }
